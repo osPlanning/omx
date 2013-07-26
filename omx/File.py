@@ -3,19 +3,6 @@
 
 import tables;
 
-# GLOBAL VARIABLES -----------
-__version__ = '0.1'
-
-# GLOBAL FUNCTIONS -----------
-def openFile(filename, mode='r', title='', root_uep='/', 
-             filters=tables.Filters(complevel=1,shuffle=True,fletcher32=False,complib='zlib'),
-             **kwargs):
-    """Open or create a new OMX file. New files will be created with default
-       zlib compression enabled."""
-    return File(filename, mode, title, root_uep, filters, **kwargs);
-
-
-# FILE class -----------------
 class File(tables.File):
     def createMatrix(self, name, atom=None, shape=None, title='', filters=None,
                      chunkshape=None, byteorder=None, createparents=False, obj=None,
@@ -82,7 +69,4 @@ class File(tables.File):
     def __contains__(self, item):
         return item in self.root._v_children
 
-
-if __name__ == "__main__":
-    print 'OMX!'
 
