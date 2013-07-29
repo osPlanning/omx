@@ -1,4 +1,5 @@
 omx
 ===
 
-Open Modeling Matrix code
+Switch to the DEV branch!  No checkins on master.
+
