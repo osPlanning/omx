@@ -1,0 +1,3 @@
+class WrongShapeError(Exception):
+    pass
+
