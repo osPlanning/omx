@@ -14,7 +14,13 @@ def openFile(filename, mode='r', title='', root_uep='/',
              **kwargs):
     """Open or create a new OMX file. New files will be created with default
        zlib compression enabled."""
-    return File(filename, mode, title, root_uep, filters, **kwargs);
+
+    f = File(filename, mode, title, root_uep, filters, **kwargs);
+
+    if 'omx_version' not in f.root._v_attrs:
+        f.root._v_attrs['omx_version'] = __version__
+
+    return f
 
 
 if __name__ == "__main__":

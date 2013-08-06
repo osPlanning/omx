@@ -11,6 +11,13 @@ class File(tables.File):
         tables.File.__init__(self,f,m,t,r,f1,**kwargs)
         self._shape = None
 
+    def version(self):
+        if 'omx_version' in f.root._v_attrs:
+            return f.root._v_attrs['omx_version']
+        else:
+            return None
+
+
     def createMatrix(self, name, atom=None, shape=None, title='', filters=None,
                      chunkshape=None, byteorder=None, createparents=False, obj=None,
                      tags=None):
