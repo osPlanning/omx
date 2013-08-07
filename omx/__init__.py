@@ -17,7 +17,8 @@ def openFile(filename, mode='r', title='', root_uep='/',
 
     f = File(filename, mode, title, root_uep, filters, **kwargs);
 
-    if 'omx_version' not in f.root._v_attrs:
+    # add omx_version attribute if file is writable
+    if mode!='r' and 'omx_version' not in f.root._v_attrs:
         f.root._v_attrs['omx_version'] = __version__
 
     return f
