@@ -5,6 +5,7 @@ import tables  # requires pytables >= 2.4
 
 from Exceptions import *
 
+
 class File(tables.File):
 
     def __init__(self, f,m,t,r,f1, **kwargs):
@@ -174,8 +175,12 @@ class File(tables.File):
         # This assumes 'dataset' is a numpy object.
         atom = tables.Atom.from_dtype(dataset.dtype)
         shape = dataset.shape
-
-        return self.createMatrix(key, atom, shape, obj=dataset)
+        
+        #checks to see if it is already a tables instance, and if so, just copies it
+        if dataset.__class__.__name__ == 'CArray':
+            return dataset.copy(self.root, key)
+        else:
+            return self.createMatrix(key, atom, shape, obj=dataset)
 
     def __delitem__(self, key):
         self.removeNode(self.root, key)
