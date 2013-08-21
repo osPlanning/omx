@@ -21,7 +21,7 @@ class File(tables.File):
 
     def createMatrix(self, name, atom=None, shape=None, title='', filters=None,
                      chunkshape=None, byteorder=None, createparents=False, obj=None,
-                     tags=None):
+                     attrs=None):
         """Create OMX Matrix (CArray) at root level. User must pass in either
            an existing numpy matrix, or a shape and an atom type."""
 
@@ -35,7 +35,10 @@ class File(tables.File):
             if (obj != None):
                 matrix[:] = obj
 
-        matrix.attrs.tags = tags
+        # attributes
+        if attrs:
+            for key in attrs:
+                matrix.attrs[key] = attrs[key]
 
         return matrix
 
@@ -59,12 +62,12 @@ class File(tables.File):
         return [node.name for node in self.listNodes(self.root,'CArray')]
 
 
-    def listAllTags(self):
-        """Return combined list of all tags used for any Matrix in this File"""
+    def listAllAttributes(self):
+        """Return combined list of all attributes used for any Matrix in this File"""
         all_tags = set()
         for m in self.listNodes(self.root,'CArray'):
-            if 'tags' in m.attrs and m.attrs.tags != None:
-                all_tags.update(m.attrs.tags)
+            if m.attrs != None:
+                all_tags.update(m.attrs._v_attrnames)
         return sorted(list(all_tags))
 
 
@@ -150,7 +153,7 @@ class File(tables.File):
 
     # The following functions implement Python list/dictionary lookups. ----
     def __getitem__(self,key):
-        """Return a matrix by name, or a list of matrices by tags"""
+        """Return a matrix by name, or a list of matrices by attributes"""
 
         if isinstance(key, str):
             return self.getNode(self.root, key)
@@ -160,10 +163,20 @@ class File(tables.File):
 
             # Loop on all matrices
             for m in self.listNodes(self.root, 'CArray'):
-                if 'tags' in m.attrs and m.attrs.tags != None:
-                    # Test whether tags are a superset of the keys being requested
-                    if set(m.attrs.tags).issuperset(key):
-                        answer.append(m)
+                if m.attrs == None: continue
+
+                valid = True
+
+                # Only test if all keys are present in matrix attributes
+                if set(m.attrs._v_attrnames).issuperset(key.keys()):
+                    # Check each value
+                    for a in key.keys():
+                        if m.attrs[a] != key[a]:
+                            valid = False
+                            break
+
+                    # Made it here; all keys match!
+                    if valid: answer.append(m)
 
             return answer
 
