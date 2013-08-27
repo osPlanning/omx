@@ -12,8 +12,8 @@ class File(tables.File):
         self._shape = None
 
     def version(self):
-        if 'omx_version' in f.root._v_attrs:
-            return f.root._v_attrs['omx_version']
+        if 'OMX_VERSION' in self.root._v_attrs:
+            return self.root._v_attrs['OMX_VERSION']
         else:
             return None
 
@@ -24,12 +24,17 @@ class File(tables.File):
         """Create OMX Matrix (CArray) at root level. User must pass in either
            an existing numpy matrix, or a shape and an atom type."""
 
+        # If object was passed in, make sure its shape is correct
+        if self.shape() != None and obj != None and obj.shape != self.shape():
+            raise ShapeError('%s has shape %s but this file requires shape %s' %
+                (name, obj.shape, self.shape()))
+
         if tables.__version__.startswith('3'):
-            matrix = self.createCArray(self.root, name, atom, shape, title, filters,
+            matrix = self.createCArray(self.root.data, name, atom, shape, title, filters,
                                        chunkshape, byteorder, createparents, obj)
         else:
             # this version is tables 2.4-compatible:
-            matrix = self.createCArray(self.root, name, atom, shape, title, filters,
+            matrix = self.createCArray(self.root.data, name, atom, shape, title, filters,
                                        chunkshape, byteorder, createparents)
             if (obj != None):
                 matrix[:] = obj
@@ -45,17 +50,28 @@ class File(tables.File):
         if self._shape:
             return self._shape
 
+        # If shape is already set in root node attributes, grab it
+        if 'SHAPE' in self.root._v_attrs:
+            self._shape = self.root._v_attrs['SHAPE']
+            return self._shape
+
         # Inspect the first CArray object to determine its shape
         if len(self) > 0:
-            self._shape = self.iterNodes(self.root,'CArray').next().shape
+            self._shape = self.iterNodes(self.root.data,'CArray').next().shape
+
+            # Store it if we can
+            if self._isWritable():
+                self.root._v_attrs['SHAPE'] = self._shape
+
             return self._shape
+
         else:
             return None
 
 
     def listMatrices(self):
         """Return list of Matrix names in this File"""
-        return [node.name for node in self.listNodes(self.root,'CArray')]
+        return [node.name for node in self.listNodes(self.root.data,'CArray')]
 
 
     def listAllTags(self):
@@ -70,14 +86,14 @@ class File(tables.File):
     # MAPPINGS -----------------------------------------------
     def listMappings(self):
         try:
-            return [m.name for m in self.listNodes(self.root._omx.mappings)]
+            return [m.name for m in self.listNodes(self.root.lookup)]
         except:
             return []
 
 
     def deleteMapping(self, title):
         try:
-            self.removeNode(self.root._omx.mappings, title)
+            self.removeNode(self.root.lookup, title)
         except:
             raise LookupError('No such mapping: '+title)
 
@@ -88,7 +104,7 @@ class File(tables.File):
         try:
             # fetch entries
             entries = []
-            entries.extend(self.getNode(self.root._omx.mappings, title)[:])
+            entries.extend(self.getNode(self.root.lookup, title)[:])
 
             # build reverse key-lookup
             keymap = {}
@@ -105,7 +121,7 @@ class File(tables.File):
         try:
             # fetch entries
             entries = []
-            entries.extend(self.getNode(self.root._omx.mappings, title)[:])
+            entries.extend(self.getNode(self.root.lookup, title)[:])
 
             return (keymap,entries)
 
@@ -121,7 +137,7 @@ class File(tables.File):
         # Enforce shape-checking
         if self.shape():
             if not len(entries) in self._shape:
-                raise WrongShapeError('Mapping must match one data dimension')
+                raise ShapeError('Mapping must match one data dimension')
 
         # Handle case where mapping already exists:
         if title in self.listMappings():
@@ -130,17 +146,12 @@ class File(tables.File):
             else:
                 raise LookupError(title+' mapping already exists.')
 
-        # Create _omx group under root if it doesn't already exist.
-        if '_omx' not in self.root:
-            self.createGroup(self.root, '_omx')
-
-        if 'mappings' in self.root._omx:
-            mappings = self.root._omx.mappings
-        else:
-            mappings = self.createGroup(self.root._omx, 'mappings')
+        # Create lookup group under root if it doesn't already exist.
+        if 'lookup' not in self.root:
+            self.createGroup(self.root, 'lookup')
 
         # Write the mapping!
-        mymap = self.createArray(mappings, title, atom=tables.Int16Atom(),
+        mymap = self.createArray(self.root.lookup, title, atom=tables.UInt16Atom(),
                                  shape=(len(entries)) )
         mymap[:] = entries
 
@@ -167,7 +178,7 @@ class File(tables.File):
             return answer
 
     def __len__(self):
-        return len(self.listNodes(self.root, 'CArray'))
+        return len(self.listNodes(self.root.data, 'CArray'))
 
     def __setitem__(self, key, dataset):
         # We need to determine atom and shape from the object that's been passed in.
@@ -178,13 +189,13 @@ class File(tables.File):
         return self.createMatrix(key, atom, shape, obj=dataset)
 
     def __delitem__(self, key):
-        self.removeNode(self.root, key)
+        self.removeNode(self.root.data, key)
 
     def __iter__(self):
         """Iterate over the keys in this container"""
-        return self.iterNodes(self.root, 'CArray')
+        return self.iterNodes(self.root.data, 'CArray')
 
     def __contains__(self, item):
-        return item in self.root._v_children
+        return item in self.root.data._v_children
 
 
