@@ -167,53 +167,62 @@ class File(tables.File):
         """Return a matrix by name, or a list of matrices by attributes"""
 
         if isinstance(key, str):
-            return self.getNode(self.root, key)
+            return self.getNode(self.root.data, key)
 
-        else:
-            answer=[]
+        if 'keys' not in dir(key):
+            raise LookupError('Key %s not found' % key)
 
-            # Loop on all matrices
-            for m in self.listNodes(self.root, 'CArray'):
-                if m.attrs == None: continue
+        # Loop through key/value pairs
+        mats = self.listNodes(self.root.data, 'CArray')
+        for a in key.keys():
+            mats = self._getMatricesByAttribute(a, key[a], mats)
 
-                valid = True
+        return mats
 
-                # Only test if all keys are present in matrix attributes
-                if set(m.attrs._v_attrnames).issuperset(key.keys()):
-                    # Check each value
-                    for a in key.keys():
-                        if m.attrs[a] != key[a]:
-                            valid = False
-                            break
 
-                    # Made it here; all keys match!
-                    if valid: answer.append(m)
+    def _getMatricesByAttribute(self, key, value, matrices=None):
 
-            return answer
+        answer = []
+
+        if matrices==None:
+            matrices = self.listNodes(self.root.data,'CArray')
+
+        for m in matrices:
+            if m.attrs == None: continue
+
+            # Only test if key is present in matrix attributes
+            if key in m.attrs._v_attrnames and m.attrs[key] == value:
+                answer.append(m)
+
+        return answer
+
 
     def __len__(self):
         return len(self.listNodes(self.root.data, 'CArray'))
+
 
     def __setitem__(self, key, dataset):
         # We need to determine atom and shape from the object that's been passed in.
         # This assumes 'dataset' is a numpy object.
         atom = tables.Atom.from_dtype(dataset.dtype)
         shape = dataset.shape
-        
+
         #checks to see if it is already a tables instance, and if so, just copies it
         if dataset.__class__.__name__ == 'CArray':
             return dataset.copy(self.root, key)
         else:
             return self.createMatrix(key, atom, shape, obj=dataset)
 
+
     def __delitem__(self, key):
         self.removeNode(self.root.data, key)
+
 
     def __iter__(self):
         """Iterate over the keys in this container"""
         return self.iterNodes(self.root.data, 'CArray')
 
+
     def __contains__(self, item):
         return item in self.root.data._v_children
-
 
