@@ -1,3 +1,3 @@
-class WrongShapeError(Exception):
+class ShapeError(Exception):
     pass
 
