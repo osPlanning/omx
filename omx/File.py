@@ -209,7 +209,7 @@ class File(tables.File):
 
         #checks to see if it is already a tables instance, and if so, just copies it
         if dataset.__class__.__name__ == 'CArray':
-            return dataset.copy(self.root, key)
+            return dataset.copy(self.root.data, key)
         else:
             return self.createMatrix(key, atom, shape, obj=dataset)
 
