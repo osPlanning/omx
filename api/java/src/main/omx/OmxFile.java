@@ -473,7 +473,7 @@ public class OmxFile extends AttributedElement implements AutoCloseable {
                 int lookup = r.nextInt(100);
                 lookup1Data[i] = lookup1Used.add(lookup) ? lookup : lookup1NA;
             }
-            OmxLookup.OmxIntLookup lookup1 = new OmxLookup.OmxIntLookup("lookup1",lookup1Data,lookup1NA);
+            OmxLookup.OmxIntLookup lookup1 = new OmxLookup.OmxIntLookup("lookup1",lookup1Data,lookup1NA,OmxLookup.Dim.FIRST);
 
             float lookup2NA = -1;
             float[] lookup2Data = new float[dim1];
@@ -482,7 +482,7 @@ public class OmxFile extends AttributedElement implements AutoCloseable {
                 float lookup = r.nextInt(100);
                 lookup2Data[i] = lookup2Used.add(lookup) ? lookup : lookup2NA;
             }
-            OmxLookup.OmxFloatLookup lookup2 = new OmxLookup.OmxFloatLookup("lookup2",lookup2Data,lookup2NA);
+            OmxLookup.OmxFloatLookup lookup2 = new OmxLookup.OmxFloatLookup("lookup2",lookup2Data,lookup2NA,OmxLookup.Dim.SECOND);
 
 
             omxFile.openNew(shape);
