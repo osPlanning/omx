@@ -241,12 +241,16 @@ listOMX <- function( OMXFileName ) {
   for( i in 1:length(Names) ) {
     Attr <- list()
     H5Data <- H5Dopen( H5Group, Names[i] )
-    H5Attr <- H5Aopen( H5Data, "NA" )
-    Attr$navalue <- H5Aread( H5Attr )
-    H5Aclose( H5Attr )
-    H5Attr <- H5Aopen( H5Data, "Description" )
-    Attr$description <- H5Aread( H5Attr )
-    H5Aclose( H5Attr )
+    if(H5Aexists(H5Data, "NA")) {
+      H5Attr <- H5Aopen( H5Data, "NA" )
+      Attr$navalue <- H5Aread( H5Attr )
+      H5Aclose( H5Attr )
+    }
+    if(H5Aexists(H5Data, "Description")) {
+      H5Attr <- H5Aopen( H5Data, "Description" )
+      Attr$description <- H5Aread( H5Attr )
+      H5Aclose( H5Attr )
+    }
     MatAttr[[Names[i]]] <- Attr
     H5Dclose( H5Data )
     rm( Attr )
@@ -287,7 +291,11 @@ listOMX <- function( OMXFileName ) {
   LookupAttr <- do.call( rbind, lapply( LookupAttr, function(x) data.frame(x) ) )    
   rm( Names, Types )
   #Combine the results into a list
-  MatInfo <- cbind( MatrixContents[,c("name","dclass","dim")], MatAttr )
+  if(length(MatAttr)>0) {
+    MatInfo <- cbind( MatrixContents[,c("name","dclass","dim")], MatAttr )
+  } else {
+    MatInfo <- MatrixContents[,c("name","dclass","dim")]
+  }
   LookupInfo <- cbind( LookupContents[,c("name","dclass","dim")], LookupAttr )
   list( OMXVersion=Version, Rows=Shape[1], Columns=Shape[2], Matrices=MatInfo, Lookups=LookupInfo )
 }
@@ -332,7 +340,9 @@ readMatrixOMX <- function( OMXFileName, MatrixName, RowIndex=NULL, ColIndex=NULL
   Result <- t( h5read( OMXFileName, ItemName, index=list(ColIndex,RowIndex) ) )
   #Replace the NA values with NA
   NAValue = as.vector( attr( h5read( OMXFileName, ItemName, read.attribute=T ), "NA" ) )
-  Result[ Result == NAValue ] <- NA
+  if(!is.null(NAValue)) {
+    Result[ Result == NAValue ] <- NA
+  } 
   #Return the result
   Result
 }
