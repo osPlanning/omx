@@ -1,4 +1,5 @@
-import tables,omx,numpy,os
+import tables,numpy,os
+import openmatrix as omx
 from nose.tools import *
 
 def setup_clean():

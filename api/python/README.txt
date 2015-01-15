@@ -1,5 +1,5 @@
 ===========
-OpenMatrix:  OMX
+OpenMatrix, or OMX
 ===========
 
 OMX is an open matrix data format, designed for sharing big matrix

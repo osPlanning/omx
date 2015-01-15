@@ -1,2 +1,5 @@
 v0.2.0, 2015-01-15 -- Initial release.
+v0.2.1, 2015-01-15 -- Fix numpy version requirement in setup
+v0.2.2, 2015-01-15 -- Fix test to reference openmatrix instead of omx
+
 
