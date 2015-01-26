@@ -115,64 +115,64 @@
   
   <path id="omx.module.production.classpath">
     <path refid="${module.jdk.classpath.omx}"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/fits.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf4obj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf5.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf5obj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdfobj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdfview.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/junit.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/netcdf.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/ext/fitsobj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/ext/nc2obj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/fits.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdf.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdf4obj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdf5.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdf5obj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdfobj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdfview.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/junit.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/netcdf.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/ext/fitsobj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/ext/nc2obj.jar"/>
   </path>
   
   <path id="omx.runtime.production.module.classpath">
     <pathelement location="${omx.output.dir}"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/fits.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf4obj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf5.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf5obj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdfobj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdfview.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/junit.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/netcdf.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/ext/fitsobj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/ext/nc2obj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/fits.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdf.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdf4obj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdf5.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdf5obj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdfobj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdfview.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/junit.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/netcdf.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/ext/fitsobj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/ext/nc2obj.jar"/>
   </path>
   
   <path id="omx.module.classpath">
     <path refid="${module.jdk.classpath.omx}"/>
     <pathelement location="${omx.output.dir}"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/fits.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf4obj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf5.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf5obj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdfobj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdfview.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/junit.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/netcdf.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/ext/fitsobj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/ext/nc2obj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/fits.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdf.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdf4obj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdf5.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdf5obj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdfobj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdfview.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/junit.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/netcdf.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/ext/fitsobj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/ext/nc2obj.jar"/>
   </path>
   
   <path id="omx.runtime.module.classpath">
     <pathelement location="${omx.testoutput.dir}"/>
     <pathelement location="${omx.output.dir}"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/fits.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf4obj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf5.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf5obj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdfobj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdfview.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/junit.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/netcdf.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/ext/fitsobj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/ext/nc2obj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/fits.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdf.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdf4obj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdf5.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdf5obj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdfobj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/jhdfview.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/junit.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/netcdf.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/ext/fitsobj.jar"/>
+    <pathelement location="${path.variable.hdf5_dir}/lib/ext/nc2obj.jar"/>
   </path>
   
   
@@ -218,21 +218,21 @@
   </target>
   
   <target name="compile.module.omx.tests" depends="compile.module.omx.production" description="compile module omx; test classes" unless="skip.tests">
-    <mkdir dir="${omx.testoutput.dir}"/>
-    <javac destdir="${omx.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.omx}/javac">
-      <compilerarg line="${compiler.args.omx}"/>
-      <bootclasspath refid="omx.module.bootclasspath"/>
-      <classpath refid="omx.module.classpath"/>
-      <src refid="omx.module.test.sourcepath"/>
-      <patternset refid="excluded.from.compilation.omx"/>
-    </javac>
-    
-    <copy todir="${omx.testoutput.dir}">
-      <fileset dir="${module.omx.basedir}/src/test">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset>
-    </copy>
+    <!--<mkdir dir="${omx.testoutput.dir}"/>-->
+    <!--<javac destdir="${omx.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.omx}/javac">-->
+      <!--<compilerarg line="${compiler.args.omx}"/>-->
+      <!--<bootclasspath refid="omx.module.bootclasspath"/>-->
+      <!--<classpath refid="omx.module.classpath"/>-->
+      <!--<src refid="omx.module.test.sourcepath"/>-->
+      <!--<patternset refid="excluded.from.compilation.omx"/>-->
+    <!--</javac>-->
+    <!---->
+    <!--<copy todir="${omx.testoutput.dir}">-->
+      <!--<fileset dir="${module.omx.basedir}/src/test">-->
+        <!--<patternset refid="compiler.resources"/>-->
+        <!--<type type="file"/>-->
+      <!--</fileset>-->
+    <!--</copy>-->
   </target>
   
   <target name="clean.module.omx" description="cleanup module">
@@ -250,13 +250,23 @@
   
   <target name="all" depends="build.modules" description="build all"/>
 
-  <target name="release" depends="build.modules">
+  <target name="doc" description="generate javadoc">
+    <javadoc destdir="${module.omx.basedir}/javadoc" windowtitle="OMX Java API">
+      <packageset dir="${module.omx.basedir}/src/main">
+        <include name="**"/>
+        <exclude name="omx/hdf5/**"/>
+      </packageset>
+      <doctitle><![CDATA[<h1>OMX Java API</h1>]]></doctitle>
+    </javadoc>
+  </target>
+
+  <target name="release" depends="build.modules,doc">
     <tstamp/>
     <delete file="${omx.release.dir}/omx.jar"/>
     <jar destfile="${omx.release.dir}/omx.jar">
 
-        <zipgroupfileset dir="D:\code\arkham\third_party\hdf5\lib" includes="*.jar"/>
-        <zipgroupfileset dir="D:\code\arkham\third_party\hdf5\lib\ext" includes="*.jar"/>
+        <zipgroupfileset dir="${path.variable.hdf5_dir}/lib" includes="*.jar"/>
+        <!--<zipgroupfileset dir="${path.variable.hdf5_dir}/lib/ext" includes="*.jar"/>-->
 
         <fileset dir="${omx.output.dir}">
           <include name="**/*.class"/>

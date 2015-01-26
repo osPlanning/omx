@@ -82,6 +82,7 @@ public class OmxLookup<D,C> extends AttributedElement {
     private final Class<?> componentClass;
     private final Class<C> objectEquivalentClass;
     private volatile C missingLookupValue;
+    private volatile Dim dim;
     private final int initialHashcode;
 
     /**
@@ -100,13 +101,16 @@ public class OmxLookup<D,C> extends AttributedElement {
      *                                  of {@code lookup} is not one of the allowed types or does not match the object-equivalent
      *                                  class of {@code missingLookupValue}.
      */
-    public OmxLookup(String name, D lookup, C missingLookupValue) {
+    public OmxLookup(String name, D lookup, C missingLookupValue, Dim dim) {
         this.name = name;
         if (!lookup.getClass().isArray())
             throw new IllegalArgumentException("Lookup must be a one dimensional array");
         length = Array.getLength(lookup);
         if (length == 0)
             throw new IllegalArgumentException("Lookup array cannot be empty");
+        this.dim = dim;
+        if (dim != Dim.NOT_SPECIFIED)
+            setAttribute(OmxConstants.OmxNames.OMX_LOOKUP_DIM_KEY.getKey(),dim.getDimValue());
         componentClass = lookup.getClass().getComponentType();
         if (!ALLOWED_CLASS_TO_OBJECT_MAP.containsKey(componentClass))
             throw new IllegalArgumentException("Component class invalid: " + componentClass);
@@ -209,6 +213,25 @@ public class OmxLookup<D,C> extends AttributedElement {
     }
 
     /**
+     * Get the dim that this lookup applies to.
+     *
+     * @return this lookup's dim.
+     */
+    public Dim getDim() {
+        return dim;
+    }
+
+    /**
+     * Set the dim that this lookup applies to.
+     *
+     * @param dim
+     *        The dim for this lookup.
+     */
+    public void setDim(Dim dim) {
+        this.dim = dim;
+    }
+
+    /**
      * Get the type of data this matrix holds. In general, this will be a primitive class (<i>e.g.</i> <code>int.class</code>),
      * though in some cases (such as <code>String.class</code>) with no primitive equivalent, the standard Java object
      * class will be returned.
@@ -286,10 +309,13 @@ public class OmxLookup<D,C> extends AttributedElement {
          * @param missingLookupValue
          *        The value to use for missing values in the lookup.
          *
+         * @param dim
+         *        The dimension this lookup applies to.
+         *
          * @throws IllegalArgumentException if {@code lookup} is not a one-dimensional array or is empty.
          */
-        public OmxByteLookup(String name, byte[] lookup, Byte missingLookupValue) {
-            super(name,lookup,missingLookupValue);
+        public OmxByteLookup(String name, byte[] lookup, Byte missingLookupValue, Dim dim) {
+            super(name,lookup,missingLookupValue,dim);
         }
     }
 
@@ -310,10 +336,13 @@ public class OmxLookup<D,C> extends AttributedElement {
          * @param missingLookupValue
          *        The value to use for missing values in the lookup.
          *
+         * @param dim
+         *        The dimension this lookup applies to.
+         *
          * @throws IllegalArgumentException if {@code lookup} is not a one-dimensional array or is empty.
          */
-        public OmxShortLookup(String name, short[] lookup, Short missingLookupValue) {
-            super(name,lookup,missingLookupValue);
+        public OmxShortLookup(String name, short[] lookup, Short missingLookupValue, Dim dim) {
+            super(name,lookup,missingLookupValue,dim);
         }
     }
 
@@ -334,10 +363,13 @@ public class OmxLookup<D,C> extends AttributedElement {
          * @param missingLookupValue
          *        The value to use for missing values in the lookup.
          *
+         * @param dim
+         *        The dimension this lookup applies to.
+         *
          * @throws IllegalArgumentException if {@code lookup} is not a one-dimensional array or is empty.
          */
-        public OmxIntLookup(String name, int[] lookup, Integer missingLookupValue) {
-            super(name,lookup,missingLookupValue);
+        public OmxIntLookup(String name, int[] lookup, Integer missingLookupValue, Dim dim) {
+            super(name,lookup,missingLookupValue,dim);
         }
     }
 
@@ -358,10 +390,13 @@ public class OmxLookup<D,C> extends AttributedElement {
          * @param missingLookupValue
          *        The value to use for missing values in the lookup.
          *
+         * @param dim
+         *        The dimension this lookup applies to.
+         *
          * @throws IllegalArgumentException if {@code lookup} is not a one-dimensional array or is empty.
          */
-        public OmxFloatLookup(String name, float[] lookup, Float missingLookupValue) {
-            super(name,lookup,missingLookupValue);
+        public OmxFloatLookup(String name, float[] lookup, Float missingLookupValue, Dim dim) {
+            super(name,lookup,missingLookupValue,dim);
         }
     }
 
@@ -382,10 +417,13 @@ public class OmxLookup<D,C> extends AttributedElement {
          * @param missingLookupValue
          *        The value to use for missing values in the lookup.
          *
+         * @param dim
+         *        The dimension this lookup applies to.
+         *
          * @throws IllegalArgumentException if {@code lookup} is not a one-dimensional array or is empty.
          */
-        public OmxDoubleLookup(String name, double[] lookup, Double missingLookupValue) {
-            super(name,lookup,missingLookupValue);
+        public OmxDoubleLookup(String name, double[] lookup, Double missingLookupValue, Dim dim) {
+            super(name,lookup,missingLookupValue,dim);
         }
     }
 
@@ -393,8 +431,26 @@ public class OmxLookup<D,C> extends AttributedElement {
      * The {@code OmxStringLookup} is an {@code OmxLookup} which holds Strings (text).
      */
     public static class OmxStringLookup extends OmxLookup<String[],String> {
-        public OmxStringLookup(String name, String[] data, String missingLookupValue) {
-            super(name,data,missingLookupValue);
+
+        /**
+         * Constructor specifying the name, data, and missing value for the lookup.
+         *
+         * @param name
+         *        The lookup name.
+         *
+         * @param lookup
+         *        The lookup data.
+         *
+         * @param missingLookupValue
+         *        The value to use for missing values in the lookup.
+         *
+         * @param dim
+         *        The dimension this lookup applies to.
+         *
+         * @throws IllegalArgumentException if {@code lookup} is not a one-dimensional array or is empty.
+         */
+        public OmxStringLookup(String name, String[] lookup, String missingLookupValue, Dim dim) {
+            super(name,lookup,missingLookupValue,dim);
         }
     }
 
@@ -414,37 +470,89 @@ public class OmxLookup<D,C> extends AttributedElement {
         Object missingValue = null;
         if (attributes.containsKey(OmxConstants.OmxNames.OMX_DATASET_NA_KEY.getKey()))
             missingValue = attributes.get(OmxConstants.OmxNames.OMX_DATASET_NA_KEY.getKey());
+        
+        Dim dim;
+        if (attributes.containsKey(OmxConstants.OmxNames.OMX_LOOKUP_DIM_KEY.getKey()))
+            dim = Dim.NOT_SPECIFIED;
+        else
+            dim = Dim.getDimForValue((Integer) attributes.get(OmxConstants.OmxNames.OMX_LOOKUP_DIM_KEY.getKey()));
+            
         String name = Hdf5Util.getBaseName(dataset.getName());
         OmxLookup lookup = null;
         switch (datatype.getOmxJavaType()) {
             case BYTE : {
                 byte[] data = (byte[]) dataset.getData();
-                lookup = new OmxByteLookup(name,data,(Byte) missingValue);
+                lookup = new OmxByteLookup(name,data,(Byte) missingValue,dim);
             } break;
             case SHORT : {
                 short[] data = (short[]) dataset.getData();
-                lookup = new OmxShortLookup(name,data,(Short) missingValue);
+                lookup = new OmxShortLookup(name,data,(Short) missingValue,dim);
             } break;
             case INT : {
                 int[] data = (int[]) dataset.getData();
-                lookup = new OmxIntLookup(name,data,(Integer) missingValue);
+                lookup = new OmxIntLookup(name,data,(Integer) missingValue,dim);
             } break;
             case FLOAT : {
                 float[] data = (float[]) dataset.getData();
-                lookup = new OmxFloatLookup(name,data,(Float) missingValue);
+                lookup = new OmxFloatLookup(name,data,(Float) missingValue,dim);
             } break;
             case DOUBLE : {
                 double[] data = (double[]) dataset.getData();
-                lookup = new OmxDoubleLookup(name,data,(Double) missingValue);
+                lookup = new OmxDoubleLookup(name,data,(Double) missingValue,dim);
             } break;
             case STRING : {
                 String[] data = (String[]) dataset.getData();
-                lookup = new OmxStringLookup(name,data,(String) missingValue);
+                lookup = new OmxStringLookup(name,data,(String) missingValue,dim);
             } break;
         }
 
         for (String key : attributes.keySet())
             lookup.setAttribute(key,attributes.get(key));
         return lookup;
+    }
+
+    /**
+     * The {@code DIM} enum is used to specify which dimension a lookup applies to. It corresponds to the <code>dim</code>
+     * attribute in the omx file.
+     */
+    public static enum Dim {
+        /**
+         * The first dimension.
+         */
+        FIRST(0),
+        /**
+         * The second dimension.
+         */
+        SECOND(1),
+        /**
+         * The dimension is not specified.
+         */
+        NOT_SPECIFIED(-1);
+
+        private final int dimValue;
+
+        private Dim(int dimValue) {
+            this.dimValue = dimValue;
+        }
+
+        /**
+         * Get the integer value used in the omx file for indicating the <code>dim</code> attribute. For {@code NOT_SPECIFIED},
+         * this method will return -1; this value <i>should not</i> be saved in the omx file, as it is invalid (no <code>dime</code>
+         * attribute should be set in this case).
+         *
+         * @return the integer value for the omx file <code>dim</code> attribute
+         */
+        public int getDimValue() {
+            return dimValue;
+        }
+
+        private static Dim getDimForValue(int dimValue) {
+            if (dimValue == FIRST.dimValue)
+                return FIRST;
+            else if (dimValue == SECOND.dimValue)
+                return SECOND;
+            else
+                throw new IllegalArgumentException("Not a valid dim value: " + dimValue);
+        }
     }
 }

@@ -11,9 +11,9 @@ import java.util.Map;
  */
 public class OmxConstants {
     public static enum OmxNames {
-        OMX_VERSION_KEY("OMX_VERSION"),
-        OMX_SHAPE_KEY("SHAPE"),
-        OMX_DATASET_DIM_KEY("dims"),
+        OMX_VERSION_KEY("omx_version"),
+        OMX_SHAPE_KEY("shape"),
+        OMX_LOOKUP_DIM_KEY("dim"),
         OMX_DATASET_TITLE_KEY("title"),
         OMX_DATASET_NA_KEY("NA"),
         OMX_DATA_GROUP("data"),
