@@ -1,5 +1,10 @@
-import tables,numpy,os
+import os
+
+import numpy as np
+import tables
+
 import openmatrix as omx
+
 from nose.tools import *
 
 def setup_clean():
@@ -39,21 +44,21 @@ def test_open_readonly_hdf5_file():
 
 def test_add_numpy_matrix_using_brackets():
     f = omx.openFile('test3.omx','w')
-    f['m1'] = numpy.ones((5,5))
+    f['m1'] = np.ones((5,5))
     f.close()
 
 def test_add_numpy_matrix_using_create_matrix():
     f = omx.openFile('test4.omx','w')
-    f.createMatrix('m1', obj=numpy.ones((5,5)))
+    f.createMatrix('m1', obj=np.ones((5,5)))
     f.close()
 
 @raises(tables.FileModeError)
 def test_add_matrix_to_readonly_file():
     f = omx.openFile('test6.omx','w')
-    f['m2'] = numpy.ones((5,5))
+    f['m2'] = np.ones((5,5))
     f.close()
     f = omx.openFile('test6.omx','r')
-    f.createMatrix('m1', obj=numpy.ones((5, 5)))
+    f.createMatrix('m1', obj=np.ones((5, 5)))
     f.close()
 
 def test_add_matrix_with_same_name():
@@ -66,15 +71,15 @@ def test_add_matrix_with_same_name():
 @with_setup(setup_clean,teardown_clean)
 def test_get_length_of_file():
     f = omx.openFile('test7.omx','w')
-    f['m1'] = numpy.ones((5,5))
-    f['m2'] = numpy.ones((5,5))
-    f['m3'] = numpy.ones((5,5))
-    f['m4'] = numpy.ones((5,5))
-    f['m5'] = numpy.ones((5,5))
+    f['m1'] = np.ones((5,5))
+    f['m2'] = np.ones((5,5))
+    f['m3'] = np.ones((5,5))
+    f['m4'] = np.ones((5,5))
+    f['m5'] = np.ones((5,5))
     assert(len(f)==5)
     assert(len(f.listMatrices())==5)
     f.close()
 
 def add_m1_node(f):
-    f.createMatrix('m1', obj=numpy.ones((7,7)))
+    f.createMatrix('m1', obj=np.ones((7,7)))
 
