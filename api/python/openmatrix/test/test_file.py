@@ -35,7 +35,7 @@ def test_open_readonly_hdf5_file():
     f = tables.openFile('test2.omx','w')
     f.close()
     f = omx.openFile('test2.omx','r')
-    f.close() 
+    f.close()
 
 def test_add_numpy_matrix_using_brackets():
     f = omx.openFile('test3.omx','w')
@@ -47,13 +47,14 @@ def test_add_numpy_matrix_using_create_matrix():
     f.createMatrix('m1', obj=numpy.ones((5,5)))
     f.close()
 
+@raises(tables.FileModeError)
 def test_add_matrix_to_readonly_file():
     f = omx.openFile('test6.omx','w')
     f['m2'] = numpy.ones((5,5))
     f.close()
     f = omx.openFile('test6.omx','r')
-    assert_raises(tables.FileModeError, add_m1_node, f)
-    f.close() 
+    f.createMatrix('m1', obj=numpy.ones((5, 5)))
+    f.close()
 
 def test_add_matrix_with_same_name():
     f = omx.openFile('test5.omx','w')
