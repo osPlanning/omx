@@ -44,20 +44,20 @@ def test_open_readonly_hdf5_file():
 @nt.with_setup(setup_func, teardown_func)
 def test_add_numpy_matrix_using_brackets():
     with omx.openFile(TEST_FILE, 'w') as f:
-        f['m1'] = np.ones((5,5))
+        f['m1'] = np.ones((5, 5))
 
 
 @nt.with_setup(setup_func, teardown_func)
 def test_add_numpy_matrix_using_create_matrix():
     with omx.openFile(TEST_FILE, 'w') as f:
-        f.createMatrix('m1', obj=np.ones((5,5)))
+        f.createMatrix('m1', obj=np.ones((5, 5)))
 
 
 @nt.with_setup(setup_func, teardown_func)
 @nt.raises(tables.FileModeError)
 def test_add_matrix_to_readonly_file():
     with omx.openFile(TEST_FILE, 'w') as f:
-        f['m2'] = np.ones((5,5))
+        f['m2'] = np.ones((5, 5))
 
     with omx.openFile(TEST_FILE, 'r') as f:
         f.createMatrix('m1', obj=np.ones((5, 5)))
@@ -75,14 +75,14 @@ def test_add_matrix_with_same_name():
 @nt.with_setup(setup_func, teardown_func)
 def test_get_length_of_file():
     with omx.openFile(TEST_FILE, 'w') as f:
-        f['m1'] = np.ones((5,5))
-        f['m2'] = np.ones((5,5))
-        f['m3'] = np.ones((5,5))
-        f['m4'] = np.ones((5,5))
-        f['m5'] = np.ones((5,5))
-        assert(len(f)==5)
-        assert(len(f.listMatrices())==5)
+        f['m1'] = np.ones((5, 5))
+        f['m2'] = np.ones((5, 5))
+        f['m3'] = np.ones((5, 5))
+        f['m4'] = np.ones((5, 5))
+        f['m5'] = np.ones((5, 5))
+        assert(len(f) == 5)
+        assert(len(f.listMatrices()) == 5)
 
 
 def add_m1_node(f):
-    f.createMatrix('m1', obj=np.ones((7,7)))
+    f.createMatrix('m1', obj=np.ones((7, 7)))
