@@ -30,7 +30,7 @@ class File(tables.File):
         if self.shape() != None and obj != None and obj.shape != self.shape():
             raise ShapeError('%s has shape %s but this file requires shape %s' %
                 (name, obj.shape, self.shape()))
-                
+
         # Create the HDF5 array
         if tables.__version__.startswith('3'):
             matrix = self.createCArray(self.root.data, name, atom, shape, title, filters,
@@ -96,10 +96,9 @@ class File(tables.File):
     def listAllAttributes(self):
         """Return combined list of all attributes used for any Matrix in this File"""
         all_tags = set()
-        for m in self.listNodes(self.root,'CArray'):
-            if m.attrs != None:
-                all_tags.update(m.attrs._v_attrnames)
-        return sorted(list(all_tags))
+        for m in self.iterNodes(self.root.data, 'CArray'):
+            all_tags.update(m.attrs._v_attrnamesuser)
+        return sorted(all_tags)
 
 
     # MAPPINGS -----------------------------------------------
