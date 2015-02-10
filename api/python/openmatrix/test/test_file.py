@@ -1,4 +1,5 @@
 import os
+import tempfile
 
 import numpy as np
 import tables
@@ -7,70 +8,76 @@ import openmatrix as omx
 
 from nose.tools import *
 
-def setup_clean():
-    try:
-        os.remove('test1.omx')
-    except:
-        pass
+TEST_FILE = None
 
 
-def setup_empty_file():
-    try:
-        os.remove('test1.omx')
-        f = omx.openFile('test.omx','w')
-        f.close()
-    except:
-        pass
+def setup_func():
+    global TEST_FILE
+
+    if TEST_FILE is not None and os.path.isfile(TEST_FILE):
+        os.remove(TEST_FILE)
+
+    with tempfile.NamedTemporaryFile(suffix='.omx') as tmp:
+        TEST_FILE = tmp.name
 
 
-def teardown_clean():
-    try:
-        os.remove('test2.omx')
-    except:
-        pass
+def teardown_func():
+    if TEST_FILE is not None and os.path.isfile(TEST_FILE):
+        os.remove(TEST_FILE)
 
 
-@with_setup(setup_clean,teardown_clean)
+@with_setup(setup_func, teardown_func)
 def test_create_file():
-    f = omx.openFile('test1.omx','w')
+    f = omx.openFile(TEST_FILE, 'w')
     f.close()
-    assert(os.path.exists('test1.omx'))
+    assert os.path.isfile(TEST_FILE)
 
+
+@with_setup(setup_func, teardown_func)
 def test_open_readonly_hdf5_file():
-    f = tables.openFile('test2.omx','w')
+    f = tables.openFile(TEST_FILE, 'w')
     f.close()
-    f = omx.openFile('test2.omx','r')
+    f = omx.openFile(TEST_FILE, 'r')
     f.close()
 
+
+@with_setup(setup_func, teardown_func)
 def test_add_numpy_matrix_using_brackets():
-    f = omx.openFile('test3.omx','w')
+    f = omx.openFile(TEST_FILE, 'w')
     f['m1'] = np.ones((5,5))
     f.close()
 
+
+@with_setup(setup_func, teardown_func)
 def test_add_numpy_matrix_using_create_matrix():
-    f = omx.openFile('test4.omx','w')
+    f = omx.openFile(TEST_FILE, 'w')
     f.createMatrix('m1', obj=np.ones((5,5)))
     f.close()
 
+
+@with_setup(setup_func, teardown_func)
 @raises(tables.FileModeError)
 def test_add_matrix_to_readonly_file():
-    f = omx.openFile('test6.omx','w')
+    f = omx.openFile(TEST_FILE, 'w')
     f['m2'] = np.ones((5,5))
     f.close()
-    f = omx.openFile('test6.omx','r')
+    f = omx.openFile(TEST_FILE, 'r')
     f.createMatrix('m1', obj=np.ones((5, 5)))
     f.close()
 
+
+@with_setup(setup_func, teardown_func)
 def test_add_matrix_with_same_name():
-    f = omx.openFile('test5.omx','w')
+    f = omx.openFile(TEST_FILE, 'w')
     add_m1_node(f)
     # now add m1 again:
     assert_raises(tables.NodeError, add_m1_node, f)
     f.close()
 
-@with_setup(setup_clean,teardown_clean)
+
+@with_setup(setup_func, teardown_func)
 def test_get_length_of_file():
-    f = omx.openFile('test7.omx','w')
+    f = omx.openFile(TEST_FILE, 'w')
     f['m1'] = np.ones((5,5))
     f['m2'] = np.ones((5,5))
     f['m3'] = np.ones((5,5))
