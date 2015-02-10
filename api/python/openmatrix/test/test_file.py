@@ -6,7 +6,7 @@ import tables
 
 import openmatrix as omx
 
-from nose.tools import *
+import nose.tools as nt
 
 TEST_FILE = None
 
@@ -26,14 +26,14 @@ def teardown_func():
         os.remove(TEST_FILE)
 
 
-@with_setup(setup_func, teardown_func)
+@nt.with_setup(setup_func, teardown_func)
 def test_create_file():
     with omx.openFile(TEST_FILE, 'w'):
         pass
     assert os.path.isfile(TEST_FILE)
 
 
-@with_setup(setup_func, teardown_func)
+@nt.with_setup(setup_func, teardown_func)
 def test_open_readonly_hdf5_file():
     with tables.openFile(TEST_FILE, 'w'):
         pass
@@ -41,20 +41,20 @@ def test_open_readonly_hdf5_file():
         pass
 
 
-@with_setup(setup_func, teardown_func)
+@nt.with_setup(setup_func, teardown_func)
 def test_add_numpy_matrix_using_brackets():
     with omx.openFile(TEST_FILE, 'w') as f:
         f['m1'] = np.ones((5,5))
 
 
-@with_setup(setup_func, teardown_func)
+@nt.with_setup(setup_func, teardown_func)
 def test_add_numpy_matrix_using_create_matrix():
     with omx.openFile(TEST_FILE, 'w') as f:
         f.createMatrix('m1', obj=np.ones((5,5)))
 
 
-@with_setup(setup_func, teardown_func)
-@raises(tables.FileModeError)
+@nt.with_setup(setup_func, teardown_func)
+@nt.raises(tables.FileModeError)
 def test_add_matrix_to_readonly_file():
     with omx.openFile(TEST_FILE, 'w') as f:
         f['m2'] = np.ones((5,5))
@@ -63,15 +63,16 @@ def test_add_matrix_to_readonly_file():
         f.createMatrix('m1', obj=np.ones((5, 5)))
 
 
-@with_setup(setup_func, teardown_func)
+@nt.with_setup(setup_func, teardown_func)
+@nt.raises(tables.NodeError)
 def test_add_matrix_with_same_name():
     with omx.openFile(TEST_FILE, 'w') as f:
         add_m1_node(f)
         # now add m1 again:
-        assert_raises(tables.NodeError, add_m1_node, f)
+        add_m1_node(f)
 
 
-@with_setup(setup_func, teardown_func)
+@nt.with_setup(setup_func, teardown_func)
 def test_get_length_of_file():
     with omx.openFile(TEST_FILE, 'w') as f:
         f['m1'] = np.ones((5,5))
