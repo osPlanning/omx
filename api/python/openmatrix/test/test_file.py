@@ -58,9 +58,9 @@ def test_set_get_del():
     with omx.openFile(TEST_FILE, 'w') as f:
         add_m1_node(f)
         npt.assert_array_equal(f['m1'], ones5x5())
-        assert f.shape() == (5, 5)
+        nt.assert_equal(f.shape(), (5, 5))
         del f['m1']
-        assert 'm1' not in f
+        nt.assert_not_in('m1', f)
 
 
 @nt.with_setup(setup_func, teardown_func)
@@ -68,7 +68,7 @@ def test_add_numpy_matrix_using_brackets():
     with omx.openFile(TEST_FILE, 'w') as f:
         f['m1'] = ones5x5()
         npt.assert_array_equal(f['m1'], ones5x5())
-        assert f.shape() == (5, 5)
+        nt.assert_equal(f.shape(), (5, 5))
 
         # test check for shape matching
         with nt.assert_raises(omx.Exceptions.ShapeError):
@@ -80,7 +80,7 @@ def test_add_numpy_matrix_using_create_matrix():
     with omx.openFile(TEST_FILE, 'w') as f:
         f.createMatrix('m1', obj=ones5x5())
         npt.assert_array_equal(f['m1'], ones5x5())
-        assert f.shape() == (5, 5)
+        nt.assert_equal(f.shape(), (5, 5))
 
 
 @nt.with_setup(setup_func, teardown_func)
@@ -110,8 +110,8 @@ def test_get_length_of_file():
         f['m3'] = np.ones((5, 5))
         f['m4'] = np.ones((5, 5))
         f['m5'] = np.ones((5, 5))
-        assert(len(f) == 5)
-        assert(len(f.listMatrices()) == 5)
+        nt.assert_equal(len(f), 5)
+        nt.assert_equal(len(f.listMatrices()), 5)
 
 
 @nt.with_setup(setup_func, teardown_func)
@@ -124,14 +124,17 @@ def test_len_list_iter():
         for mat in f:
             npt.assert_array_equal(mat, ones5x5())
 
-        assert len(f) == len(names)
-        assert f.listMatrices() == names
+        nt.assert_equal(len(f), len(names))
+        nt.assert_equal(f.listMatrices(), names)
 
 
 @nt.with_setup(setup_func, teardown_func)
 def test_contains():
     with omx.openFile(TEST_FILE, 'w') as f:
         add_m1_node(f)
+        nt.assert_in('m1', f)
+        # keep this here to be sure we're actually running
+        # File.__contains__
         assert 'm1' in f
 
 
@@ -166,11 +169,11 @@ def test_matrices_by_attr():
 
         gmba = f._getMatricesByAttribute
 
-        assert gmba('zz', 'zz') == []
-        assert gmba('a1', 'a1') == [f['m1'], f['m2'], f['m3']]
-        assert gmba('a2', 'a2') == [f['m1'], f['m2']]
-        assert gmba('a2', 'a22') == [f['m3']]
-        assert gmba('a3', 'a3') == [f['m3']]
+        nt.assert_equal(gmba('zz', 'zz'), [])
+        nt.assert_equal(gmba('a1', 'a1'), [f['m1'], f['m2'], f['m3']])
+        nt.assert_equal(gmba('a2', 'a2'), [f['m1'], f['m2']])
+        nt.assert_equal(gmba('a2', 'a22'), [f['m3']])
+        nt.assert_equal(gmba('a3', 'a3'), [f['m3']])
 
 
 @nt.with_setup(setup_func, teardown_func)
