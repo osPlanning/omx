@@ -239,7 +239,7 @@ listOMX <- function( OMXFileName ) {
   H5Group <- H5Gopen( H5File, "data" )
   MatAttr <- list()
   for( i in 1:length(Names) ) {
-    Attr <- list()
+    Attr <- list(type="matrix")
     H5Data <- H5Dopen( H5Group, Names[i] )
     if(H5Aexists(H5Data, "NA")) {
       H5Attr <- H5Aopen( H5Data, "NA" )
@@ -265,38 +265,44 @@ listOMX <- function( OMXFileName ) {
   Names <- LookupContents$name
   Types <- LookupContents$dclass
   LookupAttr <- list()
-  for( i in 1:length(Names) ) {
-    Attr <- list()
-    H5Data <- H5Dopen( H5Group, Names[i] )
-    if( H5Aexists( H5Data, "DIM" ) ) {
-      H5Attr <- H5Aopen( H5Data, "DIM" )
-      Attr$lookupdim <- H5Aread( H5Attr )
-      H5Aclose( H5Attr )
-    } else {
-      Attr$lookupdim <- ""
+  if(length(Names)>0) {
+    for( i in 1:length(Names) ) {
+      Attr <- list(type="lookup")
+      H5Data <- H5Dopen( H5Group, Names[i] )
+      if( H5Aexists( H5Data, "DIM" ) ) {
+        H5Attr <- H5Aopen( H5Data, "DIM" )
+        Attr$lookupdim <- H5Aread( H5Attr )
+        H5Aclose( H5Attr )
+      } else {
+        Attr$lookupdim <- ""
+      }
+      if( H5Aexists( H5Data, "Description" ) ) {
+        H5Attr <- H5Aopen( H5Data, "Description" )
+        Attr$description <- H5Aread( H5Attr )
+        H5Aclose( H5Attr )
+      } else {
+        Attr$description <- ""
+      }
+      LookupAttr[[Names[i]]] <- Attr
+      H5Dclose( H5Data )
+      rm( Attr )
     }
-    if( H5Aexists( H5Data, "Description" ) ) {
-      H5Attr <- H5Aopen( H5Data, "Description" )
-      Attr$description <- H5Aread( H5Attr )
-      H5Aclose( H5Attr )
-    } else {
-      Attr$description <- ""
-    }
-    LookupAttr[[Names[i]]] <- Attr
-    H5Dclose( H5Data )
-    rm( Attr )
+    H5Gclose( H5Group )
+    H5Fclose( H5File )
+    LookupAttr <- do.call( rbind, lapply( LookupAttr, function(x) data.frame(x) ) )    
+    rm( Names, Types )
   }
-  H5Gclose( H5Group )
-  H5Fclose( H5File )
-  LookupAttr <- do.call( rbind, lapply( LookupAttr, function(x) data.frame(x) ) )    
-  rm( Names, Types )
-  #Combine the results into a list
+    #Combine the results into a list
   if(length(MatAttr)>0) {
     MatInfo <- cbind( MatrixContents[,c("name","dclass","dim")], MatAttr )
   } else {
     MatInfo <- MatrixContents[,c("name","dclass","dim")]
   }
-  LookupInfo <- cbind( LookupContents[,c("name","dclass","dim")], LookupAttr )
+  if(length(LookupAttr)>0) {
+    LookupInfo <- cbind( LookupContents[,c("name","dclass","dim")], LookupAttr )
+  } else {
+    LookupInfo <- LookupContents[,c("name","dclass","dim")]
+  }
   list( OMXVersion=Version, Rows=Shape[1], Columns=Shape[2], Matrices=MatInfo, Lookups=LookupInfo )
 }
 
