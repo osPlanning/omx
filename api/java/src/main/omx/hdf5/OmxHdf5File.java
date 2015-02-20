@@ -4,11 +4,16 @@ import ncsa.hdf.hdf5lib.H5;
 import ncsa.hdf.hdf5lib.HDF5Constants;
 import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
 import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import omx.OmxLookup.OmxDoubleLookup;
+import omx.OmxMatrix.OmxDoubleMatrix;
+import omx.hdf5.OmxHdf5Datatype.OmxJavaType;
 
 /**
  * The {@code OmxHdf5File} ...
@@ -266,7 +271,17 @@ public class OmxHdf5File implements AutoCloseable {
                     for (int i = 0; i < shape.length; i++)
                         space[i] = shape[i];
                     int dataspace = H5.H5Screate_simple(space.length,space,null);
-                    datasetId = H5.H5Dcreate(fileId,dataset.getName(),datatype,dataspace,HDF5Constants.H5P_DEFAULT,HDF5Constants.H5P_DEFAULT,HDF5Constants.H5P_DEFAULT);
+                    
+                    //Use a row-chunked, zip-compressed data format
+                    int plist = H5.H5Pcreate(HDF5Constants.H5P_DATASET_CREATE);
+                    long[] chunksize = new long[2];
+                    chunksize[0] = 1;
+                    chunksize[1] = shape[0];
+                    H5.H5Pset_chunk(plist, space.length, chunksize);
+                    H5.H5Pset_deflate(plist, 7);
+                    
+                    datasetId = H5.H5Dcreate(fileId,dataset.getName(),datatype,dataspace,HDF5Constants.H5P_DEFAULT,plist,HDF5Constants.H5P_DEFAULT);
+                    
                     H5.H5Tclose(datatype);
                     H5.H5Sclose(dataspace);
                 } else {
@@ -274,7 +289,51 @@ public class OmxHdf5File implements AutoCloseable {
                 }
                 //next add data
                 if (newDataset || dataset.isDataMutated()) {
-                    H5.H5Dwrite(datasetId,dataset.getDatatype().getNativeDatatypeId(),HDF5Constants.H5S_ALL,HDF5Constants.H5S_ALL,HDF5Constants.H5P_DEFAULT,dataset.getData());
+                	
+                	//if matrix 
+                	int[] shape = dataset.getShape();
+                	if(shape.length>1) {
+                	
+                		//setup hyperslab i/o
+                    	long[] count = new long[2];
+                    	long[] offset= new long[2];
+                    	count[0] = 1;
+                    	count[1] = shape[1];
+                    	
+                        int memspace = H5.H5Screate_simple(2,count,null);
+                    	int dataspace = H5.H5Dget_space(datasetId);
+                    	
+                    	//write rows
+                        for (int i = 0; i < shape[0]; i++) {
+                        	
+                        	offset[0] = i;
+                        	offset[1] = 0;
+                        	
+                        	//get data container
+                        	Object rowdata = null;
+                        	OmxJavaType ojt = dataset.getDatatype().getOmxJavaType();
+                        	if (ojt.equals(OmxHdf5Datatype.OmxJavaType.INT)) {
+                        		rowdata = ((int[][]) dataset.getData())[i];
+                        	} else if(ojt.equals(OmxHdf5Datatype.OmxJavaType.SHORT)) {
+                        		rowdata = ((short[][]) dataset.getData())[i];
+                        	} else if(ojt.equals(OmxHdf5Datatype.OmxJavaType.FLOAT)) {
+                        		rowdata = ((float[][]) dataset.getData())[i];
+                        	} else if(ojt.equals(OmxHdf5Datatype.OmxJavaType.DOUBLE)) {
+                        		rowdata = ((double[][]) dataset.getData())[i];
+                        	} else if(ojt.equals(OmxHdf5Datatype.OmxJavaType.BYTE)) {
+                        		rowdata = ((byte[][]) dataset.getData())[i];
+                        	} else if(ojt.equals(OmxHdf5Datatype.OmxJavaType.STRING)) {
+                        		rowdata = ((String[][]) dataset.getData())[i];
+                        	}
+                        	H5.H5Sselect_hyperslab (dataspace, HDF5Constants.H5S_SELECT_SET, offset, null, count, null);
+                        	H5.H5Dwrite(datasetId,dataset.getDatatype().getNativeDatatypeId(),memspace,dataspace,HDF5Constants.H5P_DEFAULT,rowdata);
+                        }
+                		
+                	} else {
+                		
+                		H5.H5Dwrite(datasetId,dataset.getDatatype().getNativeDatatypeId(),HDF5Constants.H5S_ALL,HDF5Constants.H5S_ALL,HDF5Constants.H5P_DEFAULT,dataset.getData());
+                	}
+                    
                 }
                 //next add attributes
                 if (newDataset || dataset.areAttributesMutated()) {
@@ -375,42 +434,5 @@ public class OmxHdf5File implements AutoCloseable {
 
     public void reload() {
         reload(true,true);
-    }
-
-    public static void main(String ... args) {
-        //String f = "D:\\dump\\myfile.omx";
-        String f = "D:\\code\\omx\\example.omx";
-        String f2 = "D:\\code\\omx\\example_test.omx";
-        try (OmxHdf5File omxHdf5File = new OmxHdf5File(f)) {
-            omxHdf5File.openReadOnly();
-            System.out.println(OmxUtil.deepToString(omxHdf5File.getBaseGroup()));
-
-            double[][] m1Data = (double[][]) omxHdf5File.getBaseGroup().getGroup("data").getDataset("m1").getData();
-            System.out.println(Arrays.deepToString(m1Data).replace("],","],\n"));
-//
-//            short[] tazData = (short[]) omxHdf5File.getBaseGroup().getDataset("_omx/mappings/taz").getLookup();
-//            System.out.println(Arrays.toString(tazData));
-        }
-
-        try (OmxHdf5File omxHdf5File = new OmxHdf5File(f2)) {
-            int[] dims = new int[] {5,9};
-            omxHdf5File.openNew(dims);
-            OmxHdf5Datatype datatype = new OmxHdf5Datatype(OmxHdf5Datatype.OmxJavaType.INT.getHdf5NativeId());
-            Map<String,Object> attributes = new HashMap<>();
-            int[][] data = new int[5][9];
-            Random random = new Random();
-            for (int i = 0; i < data.length; i++)
-                for (int j = 0; j < data[i].length; j++)
-                    data[i][j] = random.nextInt(999);
-            OmxDataset dataset = new OmxMemoryDataset("/data/test",dims,datatype,attributes,data);
-            omxHdf5File.getBaseGroup().getMutableGroup().setDataset(dataset);
-        }
-        try (OmxHdf5File omxHdf5File = new OmxHdf5File(f2)) {
-            omxHdf5File.openReadOnly();
-            System.out.println(OmxUtil.deepToString(omxHdf5File.getBaseGroup()));
-
-            int[][] testData = (int[][]) omxHdf5File.getBaseGroup().getGroup("data").getDataset("test").getData();
-            System.out.println(Arrays.deepToString(testData).replace("],","],\n"));
-        }
     }
 }

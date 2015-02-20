@@ -8,6 +8,8 @@ import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
 import java.lang.reflect.Array;
 import java.util.*;
 
+import omx.hdf5.OmxHdf5Datatype.OmxJavaType;
+
 /**
  * The {@code OmxHdf5Dataset} ...
  *
@@ -79,11 +81,88 @@ public class OmxHdf5Dataset implements OmxDataset {
         return Collections.unmodifiableMap(attributes);
     }
 
-    private void copyData(Object arrayForData) {
+    private Object copyData() {
         int datasetId = -1;
+        
+        //data container
+        Object arrayForData = Array.newInstance(getDatatype().getOmxJavaType().getJavaClass(),getShape());
+        
         try {
             datasetId = H5.H5Dopen(fileId,name,HDF5Constants.H5P_DEFAULT);
-            H5.H5Dread(datasetId,getDatatype().getOmxJavaType().getHdf5NativeId(),HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL,HDF5Constants.H5P_DEFAULT,arrayForData);
+            
+            //if matrix 
+        	if(shape.length>1) {
+
+        		//temp data container
+                Object[] matrixData = new Object[shape[0]];
+        		
+        		//setup hyperslab i/o
+            	long[] count = new long[2];
+            	long[] offset= new long[2];
+            	count[0] = 1;
+            	count[1] = shape[1];
+            	
+                int memspace = H5.H5Screate_simple(2,count,null);
+            	int dataspace = H5.H5Dget_space(datasetId);
+            	
+            	//read rows
+                for (int i = 0; i < shape[0]; i++) {
+                	
+                	offset[0] = i;
+                	offset[1] = 0;
+                	
+                	H5.H5Sselect_hyperslab (dataspace, HDF5Constants.H5S_SELECT_SET, offset, null, count, null);
+                	Object rowdata = Array.newInstance(getDatatype().getOmxJavaType().getJavaClass(),shape[0]);
+                	H5.H5Dread(datasetId,getDatatype().getOmxJavaType().getHdf5NativeId(),memspace, dataspace,HDF5Constants.H5P_DEFAULT,rowdata);
+                	matrixData[i] = rowdata;
+                }
+                
+                //typecast - this can probably be done in a better fashion
+                OmxJavaType ojt = getDatatype().getOmxJavaType();
+            	if (ojt.equals(OmxHdf5Datatype.OmxJavaType.INT)) {
+            		int[][] tempData = new int[shape[0]][shape[1]];
+            		for (int i = 0; i < shape[0]; i++) {
+            			tempData[i] = (int[]) matrixData[i];
+                    }
+            		arrayForData = tempData;
+            	} else if(ojt.equals(OmxHdf5Datatype.OmxJavaType.SHORT)) {
+            		short[][] tempData = new short[shape[0]][shape[1]];
+            		for (int i = 0; i < shape[0]; i++) {
+            			tempData[i] = (short[]) matrixData[i];
+                    }
+            		arrayForData = tempData;
+            	} else if(ojt.equals(OmxHdf5Datatype.OmxJavaType.FLOAT)) {
+            		float[][] tempData = new float[shape[0]][shape[1]];
+            		for (int i = 0; i < shape[0]; i++) {
+            			tempData[i] = (float[]) matrixData[i];
+                    }
+            		arrayForData = tempData;
+            	} else if(ojt.equals(OmxHdf5Datatype.OmxJavaType.DOUBLE)) {
+            		double[][] tempData = new double[shape[0]][shape[1]];
+            		for (int i = 0; i < shape[0]; i++) {
+            			tempData[i] = (double[]) matrixData[i];
+                    }
+            		arrayForData = tempData;
+            	} else if(ojt.equals(OmxHdf5Datatype.OmxJavaType.BYTE)) {
+            		byte[][] tempData = new byte[shape[0]][shape[1]];
+            		for (int i = 0; i < shape[0]; i++) {
+            			tempData[i] = (byte[]) matrixData[i];
+                    }
+            		arrayForData = tempData;
+            	} else if(ojt.equals(OmxHdf5Datatype.OmxJavaType.STRING)) {
+            		String[][] tempData = new String[shape[0]][shape[1]];
+            		for (int i = 0; i < shape[0]; i++) {
+            			tempData[i] = (String[]) matrixData[i];
+                    }
+            		arrayForData = tempData;
+            	}            	
+                
+        	} else {
+        		H5.H5Dread(datasetId,getDatatype().getOmxJavaType().getHdf5NativeId(),HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL,HDF5Constants.H5P_DEFAULT,arrayForData);
+        	}
+            
+        	return(arrayForData);
+        	
         } catch (HDF5Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -99,8 +178,7 @@ public class OmxHdf5Dataset implements OmxDataset {
 
     @Override
     public Object getData() {
-        Object arrayForData = Array.newInstance(getDatatype().getOmxJavaType().getJavaClass(),getShape());
-        copyData(arrayForData);
+        Object arrayForData = copyData();
         return arrayForData;
     }
 

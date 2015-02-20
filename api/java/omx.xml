@@ -1,267 +1,42 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project name="omx" default="all">
-  
-  
-  <property file="omx.properties"/>
-  <!-- Uncomment the following property if no tests compilation is needed -->
-  <!-- 
-  <property name="skip.tests" value="true"/>
-   -->
-  
-  <!-- Compiler options -->
-  
-  <property name="compiler.debug" value="on"/>
-  <property name="compiler.generate.no.warnings" value="off"/>
-  <property name="compiler.args" value=""/>
-  <property name="compiler.max.memory" value="128m"/>
-  <patternset id="ignored.files">
-    <exclude name="**/CVS/**"/>
-    <exclude name="**/SCCS/**"/>
-    <exclude name="**/RCS/**"/>
-    <exclude name="**/.DS_Store/**"/>
-    <exclude name="**/.svn/**"/>
-    <exclude name="**/.pyc/**"/>
-    <exclude name="**/.pyo/**"/>
-    <exclude name="**/*.pyc/**"/>
-    <exclude name="**/*.pyo/**"/>
-    <exclude name="**/.git/**"/>
-    <exclude name="**/*.hprof/**"/>
-    <exclude name="**/_svn/**"/>
-    <exclude name="**/.hg/**"/>
-    <exclude name="**/*.lib/**"/>
-    <exclude name="**/*~/**"/>
-    <exclude name="**/__pycache__/**"/>
-    <exclude name="**/.bundle/**"/>
-    <exclude name="**/*.rbc/**"/>
-  </patternset>
-  <patternset id="library.patterns">
-    <include name="*.war"/>
-    <include name="*.ear"/>
-    <include name="*.apk"/>
-    <include name="*.zip"/>
-    <include name="*.swc"/>
-    <include name="*.ane"/>
-    <include name="*.egg"/>
-    <include name="*.jar"/>
-  </patternset>
-  <patternset id="compiler.resources">
-    <include name="**/?*.properties"/>
-    <include name="**/?*.xml"/>
-    <include name="**/?*.gif"/>
-    <include name="**/?*.png"/>
-    <include name="**/?*.jpeg"/>
-    <include name="**/?*.jpg"/>
-    <include name="**/?*.html"/>
-    <include name="**/?*.dtd"/>
-    <include name="**/?*.tld"/>
-    <include name="**/?*.ftl"/>
-  </patternset>
-  
-  <!-- JDK definitions -->
-  
-  <property name="jdk.bin.1.7" value="${jdk.home.1.7}/bin"/>
-  <path id="jdk.classpath.1.7">
-    <fileset dir="${jdk.home.1.7}">
-      <include name="jre/lib/charsets.jar"/>
-      <include name="jre/lib/deploy.jar"/>
-      <include name="jre/lib/javaws.jar"/>
-      <include name="jre/lib/jce.jar"/>
-      <include name="jre/lib/jfr.jar"/>
-      <include name="jre/lib/jfxrt.jar"/>
-      <include name="jre/lib/jsse.jar"/>
-      <include name="jre/lib/management-agent.jar"/>
-      <include name="jre/lib/plugin.jar"/>
-      <include name="jre/lib/resources.jar"/>
-      <include name="jre/lib/rt.jar"/>
-      <include name="jre/lib/ext/access-bridge-64.jar"/>
-      <include name="jre/lib/ext/dnsns.jar"/>
-      <include name="jre/lib/ext/jaccess.jar"/>
-      <include name="jre/lib/ext/localedata.jar"/>
-      <include name="jre/lib/ext/sunec.jar"/>
-      <include name="jre/lib/ext/sunjce_provider.jar"/>
-      <include name="jre/lib/ext/sunmscapi.jar"/>
-      <include name="jre/lib/ext/zipfs.jar"/>
-    </fileset>
-  </path>
-  
-  <property name="project.jdk.home" value="${jdk.home.1.7}"/>
-  <property name="project.jdk.bin" value="${jdk.bin.1.7}"/>
-  <property name="project.jdk.classpath" value="jdk.classpath.1.7"/>
-  
-  
-  <!-- Global Libraries -->
-  
-  <!-- Modules -->
-  
-  
-  <!-- Module omx -->
-  
-  <dirname property="module.omx.basedir" file="${ant.file}"/>
-  
-  
-  <property name="module.jdk.home.omx" value="${project.jdk.home}"/>
-  <property name="module.jdk.bin.omx" value="${project.jdk.bin}"/>
-  <property name="module.jdk.classpath.omx" value="${project.jdk.classpath}"/>
-  
-  <property name="compiler.args.omx" value="${compiler.args}"/>
-  
-  <property name="omx.output.dir" value="${module.omx.basedir}/out/production/omx"/>
-  <property name="omx.testoutput.dir" value="${module.omx.basedir}/out/test/omx"/>
-  <property name="omx.release.dir" value="${module.omx.basedir}/release"/>
-  
-  <path id="omx.module.bootclasspath">
-    <!-- Paths to be included in compilation bootclasspath -->
-  </path>
-  
-  <path id="omx.module.production.classpath">
-    <path refid="${module.jdk.classpath.omx}"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/fits.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf4obj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf5.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf5obj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdfobj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdfview.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/junit.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/netcdf.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/ext/fitsobj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/ext/nc2obj.jar"/>
-  </path>
-  
-  <path id="omx.runtime.production.module.classpath">
-    <pathelement location="${omx.output.dir}"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/fits.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf4obj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf5.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf5obj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdfobj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdfview.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/junit.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/netcdf.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/ext/fitsobj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/ext/nc2obj.jar"/>
-  </path>
-  
-  <path id="omx.module.classpath">
-    <path refid="${module.jdk.classpath.omx}"/>
-    <pathelement location="${omx.output.dir}"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/fits.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf4obj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf5.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf5obj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdfobj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdfview.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/junit.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/netcdf.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/ext/fitsobj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/ext/nc2obj.jar"/>
-  </path>
-  
-  <path id="omx.runtime.module.classpath">
-    <pathelement location="${omx.testoutput.dir}"/>
-    <pathelement location="${omx.output.dir}"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/fits.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf4obj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf5.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdf5obj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdfobj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/jhdfview.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/junit.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/netcdf.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/ext/fitsobj.jar"/>
-    <pathelement location="${path.variable.main_repository}/third_party/hdf5/lib/ext/nc2obj.jar"/>
-  </path>
-  
-  
-  <patternset id="excluded.from.module.omx">
-    <patternset refid="ignored.files"/>
-  </patternset>
-  
-  <patternset id="excluded.from.compilation.omx">
-    <patternset refid="excluded.from.module.omx"/>
-  </patternset>
-  
-  <path id="omx.module.sourcepath">
-    <dirset dir="${module.omx.basedir}">
-      <include name="src/main"/>
-    </dirset>
-  </path>
-  
-  <path id="omx.module.test.sourcepath">
-    <dirset dir="${module.omx.basedir}">
-      <include name="src/test"/>
-    </dirset>
-  </path>
-  
-  
-  <target name="compile.module.omx" depends="compile.module.omx.production,compile.module.omx.tests" description="Compile module omx"/>
-  
-  <target name="compile.module.omx.production" description="Compile module omx; production classes">
-    <mkdir dir="${omx.output.dir}"/>
-    <javac destdir="${omx.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.omx}/javac">
-      <compilerarg line="${compiler.args.omx}"/>
-      <bootclasspath refid="omx.module.bootclasspath"/>
-      <classpath refid="omx.module.production.classpath"/>
-      <src refid="omx.module.sourcepath"/>
-      <patternset refid="excluded.from.compilation.omx"/>
-    </javac>
+
+    <!-- File location -->
+    <dirname property="module.omx.basedir" file="${ant.file}"/>
+
+    <!-- classpath -->
+    <path id="compile.classpath">
+
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/fits.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/jhdf.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/jhdf4obj.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/jhdf5.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/jhdf5obj.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/jhdfobj.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/jhdfview.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/junit.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/netcdf.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/ext/fitsobj.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/ext/nc2obj.jar"/>
     
-    <copy todir="${omx.output.dir}">
-      <fileset dir="${module.omx.basedir}/src/main">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset>
-    </copy>
-  </target>
-  
-  <target name="compile.module.omx.tests" depends="compile.module.omx.production" description="compile module omx; test classes" unless="skip.tests">
-    <mkdir dir="${omx.testoutput.dir}"/>
-    <javac destdir="${omx.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.omx}/javac">
-      <compilerarg line="${compiler.args.omx}"/>
-      <bootclasspath refid="omx.module.bootclasspath"/>
-      <classpath refid="omx.module.classpath"/>
-      <src refid="omx.module.test.sourcepath"/>
-      <patternset refid="excluded.from.compilation.omx"/>
-    </javac>
-    
-    <copy todir="${omx.testoutput.dir}">
-      <fileset dir="${module.omx.basedir}/src/test">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset>
-    </copy>
-  </target>
-  
-  <target name="clean.module.omx" description="cleanup module">
-    <delete dir="${omx.output.dir}"/>
-    <delete dir="${omx.testoutput.dir}"/>
-  </target>
-  
-  <target name="init" description="Build initialization">
-    <!-- Perform any build initialization in this target -->
-  </target>
-  
-  <target name="clean" depends="clean.module.omx" description="cleanup all"/>
-  
-  <target name="build.modules" depends="init, clean, compile.module.omx" description="build all modules"/>
-  
-  <target name="all" depends="build.modules" description="build all"/>
+    </path>
+  	
+	<!-- build jar only, need to build in Eclipse first -->
+  	<target name="release">
 
-  <target name="release" depends="build.modules">
-    <tstamp/>
-    <delete file="${omx.release.dir}/omx.jar"/>
-    <jar destfile="${omx.release.dir}/omx.jar">
+        <delete file="${module.omx.basedir}/release/omx.jar"/>
+        <jar destfile="${module.omx.basedir}/release/omx.jar">
 
-        <zipgroupfileset dir="D:\code\arkham\third_party\hdf5\lib" includes="*.jar"/>
-        <zipgroupfileset dir="D:\code\arkham\third_party\hdf5\lib\ext" includes="*.jar"/>
+          <zipgroupfileset dir="{module.omx.basedir}/../../../../hdf5/lib" includes="*.jar"/>
+          <zipgroupfileset dir="{module.omx.basedir}/../../../../hdf5/lib/ext" includes="*.jar"/>
 
-        <fileset dir="${omx.output.dir}">
-          <include name="**/*.class"/>
-        </fileset>
+          <fileset dir="${module.omx.basedir}/bin">
+            <include name="**/*.class"/>
+          </fileset>
 
-    </jar>
-  </target>
+        </jar>
+    </target>
+
 </project>
+
+
+

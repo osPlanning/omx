@@ -132,10 +132,14 @@ public class OmxFile extends AttributedElement implements AutoCloseable {
             setAttribute(attribute,attributes.get(attribute));
         OmxGroup dataGroup = baseGroup.getGroup(OmxConstants.OmxNames.OMX_DATA_GROUP.getKey());
         for (String datasetName : dataGroup.getDatasetNames())
-            matrices.put(datasetName,OmxMatrix.getMatrix(dataGroup.getDataset(datasetName)));
+        	if(!matrices.containsKey(datasetName)) { //only load if matrix doesn't exist
+        		matrices.put(datasetName,OmxMatrix.getMatrix(dataGroup.getDataset(datasetName)));
+        	}
         OmxGroup lookupGroup = baseGroup.getGroup(OmxConstants.OmxNames.OMX_LOOKUP_GROUP.getKey());
         for (String lookupName : lookupGroup.getDatasetNames())
-            lookups.put(lookupName,OmxLookup.getLookup(lookupGroup.getDataset(lookupName)));
+        	if(!lookups.containsKey(lookupName)) { //only load if lookup doesn't exist
+        		lookups.put(lookupName,OmxLookup.getLookup(lookupGroup.getDataset(lookupName)));
+        	}
     }
 
     /**
@@ -444,67 +448,66 @@ public class OmxFile extends AttributedElement implements AutoCloseable {
 
 
     public static void main(String ... args) {
-        Random r = new Random();
+        
+    	Random r = new Random();
         String f = "example.omx";
         try (OmxFile omxFile = new OmxFile(f)) {
-            int dim0 = 43;
-            int dim1 = 67;
+            
+        	int dim0 = 2000;
+        	
+            int dim1 = dim0;
             int[] shape = {dim0,dim1};
 
-            int mat1NA = -1;
-            int[][] mat1Data = new int[dim0][dim1];
+            double mat1NA = -1;
+            double[][] mat1Data = new double[dim0][dim1];
             for (int i = 0; i < dim0; i++)
                 for (int j = 0; j < dim1; j++)
-                    mat1Data[i][j] = r.nextInt(100) < 2 ? mat1NA : r.nextInt(1000);
-            OmxMatrix.OmxIntMatrix mat1 = new OmxMatrix.OmxIntMatrix("mat1",mat1Data,mat1NA);
+                    mat1Data[i][j] = i+j;
+            OmxMatrix.OmxDoubleMatrix mat1 = new OmxMatrix.OmxDoubleMatrix("mat1",mat1Data,mat1NA);
             mat1.setAttribute(OmxConstants.OmxNames.OMX_DATASET_TITLE_KEY.getKey(),"an int matrix");
 
-            double mat2NA = Double.NaN;
-            double[][] mat2Data = new double[dim0][dim1];
+            int mat2NA = -99999;
+            int[][] mat2Data = new int[dim0][dim1];
             for (int i = 0; i < dim0; i++)
                 for (int j = 0; j < dim1; j++)
-                    mat2Data[i][j] = r.nextInt(100) < 2 ? mat2NA : r.nextDouble()*1000;
-            OmxMatrix.OmxDoubleMatrix mat2 = new OmxMatrix.OmxDoubleMatrix("mat2",mat2Data,mat2NA);
+                    mat2Data[i][j] = r.nextInt(100);
+            OmxMatrix.OmxIntMatrix mat2 = new OmxMatrix.OmxIntMatrix("mat2",mat2Data,mat2NA);
 
             int lookup1NA = -1;
             int[] lookup1Data = new int[dim0];
             Set<Integer> lookup1Used = new HashSet<>();
             for (int i = 0; i < lookup1Data.length; i++) {
-                int lookup = r.nextInt(100);
+                int lookup = i+1;
                 lookup1Data[i] = lookup1Used.add(lookup) ? lookup : lookup1NA;
             }
             OmxLookup.OmxIntLookup lookup1 = new OmxLookup.OmxIntLookup("lookup1",lookup1Data,lookup1NA);
 
-            float lookup2NA = -1;
-            float[] lookup2Data = new float[dim1];
-            Set<Float> lookup2Used = new HashSet<>();
+            double lookup2NA = -99999;
+            double[] lookup2Data = new double[dim1];
+            Set<Double> lookup2Used = new HashSet<>();
             for (int i = 0; i < lookup2Data.length; i++) {
-                float lookup = r.nextInt(100);
+            	double lookup = i+1;
                 lookup2Data[i] = lookup2Used.add(lookup) ? lookup : lookup2NA;
             }
-            OmxLookup.OmxFloatLookup lookup2 = new OmxLookup.OmxFloatLookup("lookup2",lookup2Data,lookup2NA);
-
+            OmxLookup.OmxDoubleLookup lookup2 = new OmxLookup.OmxDoubleLookup("lookup2",lookup2Data,lookup2NA);
 
             omxFile.openNew(shape);
             omxFile.addMatrix(mat1);
-            omxFile.addMatrix(mat2);
             omxFile.addLookup(lookup1);
-            omxFile.save();
+            omxFile.addMatrix(mat2);
             omxFile.addLookup(lookup2);
             omxFile.save();
             System.out.println(omxFile.summary());
-            System.out.println(mat1.getName());
-            omxFile.deleteMatrix(mat1.getName());
-            omxFile.deleteLookup(lookup1.getName());
-            omxFile.deleteLookup(lookup2.getName());
+            
         }
-
-        System.out.println("repack");
-        OmxFile.repack(f);
 
         try (OmxFile omxFile = new OmxFile(f)) {
-            omxFile.openReadOnly();
+            omxFile.openReadWrite();
+            System.out.println(omxFile.summary());
+            omxFile.deleteMatrix("mat1");
+            omxFile.deleteLookup("lookup1");
             System.out.println(omxFile.summary());
         }
+        
     }
 }

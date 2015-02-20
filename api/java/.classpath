@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="omx/release/lib/win64"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="release/omx.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/projects/development/hdf5/lib/ext/fitsobj.jar"/>
+	<classpathentry kind="lib" path="C:/projects/development/hdf5/lib/ext/nc2obj.jar"/>
+	<classpathentry kind="lib" path="C:/projects/development/hdf5/lib/fits.jar"/>
+	<classpathentry kind="lib" path="C:/projects/development/hdf5/lib/jhdf.jar"/>
+	<classpathentry kind="lib" path="C:/projects/development/hdf5/lib/jhdf4obj.jar"/>
+	<classpathentry kind="lib" path="C:/projects/development/hdf5/lib/jhdf5.jar"/>
+	<classpathentry kind="lib" path="C:/projects/development/hdf5/lib/jhdf5obj.jar"/>
+	<classpathentry kind="lib" path="C:/projects/development/hdf5/lib/jhdfobj.jar"/>
+	<classpathentry kind="lib" path="C:/projects/development/hdf5/lib/jhdfview.jar"/>
+	<classpathentry kind="lib" path="C:/projects/development/hdf5/lib/junit.jar"/>
+	<classpathentry kind="lib" path="C:/projects/development/hdf5/lib/netcdf.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
