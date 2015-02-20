@@ -27,10 +27,10 @@ class File(tables.File):
            an existing numpy matrix, or a shape and an atom type."""
 
         # If object was passed in, make sure its shape is correct
-        if self.shape() != None and obj != None and obj.shape != self.shape():
+        if self.shape() is not None and obj is not None and obj.shape != self.shape():
             raise ShapeError('%s has shape %s but this file requires shape %s' %
                 (name, obj.shape, self.shape()))
-                
+
         # Create the HDF5 array
         if tables.__version__.startswith('3'):
             matrix = self.createCArray(self.root.data, name, atom, shape, title, filters,
@@ -39,11 +39,11 @@ class File(tables.File):
             # this version is tables 2.4-compatible:
             matrix = self.createCArray(self.root.data, name, atom, shape, title, filters,
                                        chunkshape, byteorder, createparents)
-            if (obj != None):
+            if (obj is not None):
                 matrix[:] = obj
 
         # Store shape if we don't have one yet
-        if self._shape == None:
+        if self._shape is None:
             storeshape = np.array([matrix.shape[0],matrix.shape[1]], dtype='int32')
             self.root._v_attrs['SHAPE'] = storeshape
             self._shape = matrix.shape
@@ -96,10 +96,9 @@ class File(tables.File):
     def listAllAttributes(self):
         """Return combined list of all attributes used for any Matrix in this File"""
         all_tags = set()
-        for m in self.listNodes(self.root,'CArray'):
-            if m.attrs != None:
-                all_tags.update(m.attrs._v_attrnames)
-        return sorted(list(all_tags))
+        for m in self.iterNodes(self.root.data, 'CArray'):
+            all_tags.update(m.attrs._v_attrnamesuser)
+        return sorted(all_tags)
 
 
     # MAPPINGS -----------------------------------------------
@@ -199,11 +198,12 @@ class File(tables.File):
 
         answer = []
 
-        if matrices==None:
+        if matrices is None:
             matrices = self.listNodes(self.root.data,'CArray')
 
         for m in matrices:
-            if m.attrs == None: continue
+            if m.attrs is None:
+                continue
 
             # Only test if key is present in matrix attributes
             if key in m.attrs._v_attrnames and m.attrs[key] == value:
