@@ -18,3 +18,6 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Python build directory
+api/python/build
