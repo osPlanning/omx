@@ -98,9 +98,12 @@ writeMatrixOMX <- function( OMXFileName, Matrix, MatrixSaveName, RowIndex=NULL, 
     #Transpose matrix and convert NA to designated storage value
     Matrix <- t( Matrix )
     Matrix[ is.na( Matrix ) ] <- NaValue
-    #Write matrix to file
+    
+    #Write matrix to file, set chunking and compression
     ItemName <- paste( "data", MatrixSaveName, sep="/" )
-    h5write( Matrix, OMXFileName, ItemName )
+    h5createDataset(OMXFileName, ItemName, dim(Matrix), chunk=c(nrow(Matrix),1), level=7)
+    h5write( Matrix, OMXFileName, ItemName)
+    
     #Add the NA storage value and matrix descriptions as attributes to the matrix
     H5File <- H5Fopen( OMXFileName )
     H5Group <- H5Gopen( H5File, "data" )
@@ -453,3 +456,21 @@ readSelectedOMX <- function( OMXFileName, MatrixName, RowSelection=NULL, ColSele
   #Return the matrix
   Result                
 }  
+
+#Function to write matrix attribute
+#-------------------------------------------------------------------------
+#Arguments:
+#OMXFileName = Path name of the OMX file where the matrix resides
+#MatrixName = Name of the matrix in the OMX file
+#AttributeName = Name of attribute
+#Value = Attribute value
+writeMatrixAttribute <- function( OMXFileName, MatrixSaveName, AttributeName, Value) {
+    H5File <- H5Fopen( OMXFileName )
+    H5Group <- H5Gopen( H5File, "data" )
+    H5Data <- H5Dopen( H5Group, MatrixSaveName )
+    h5writeAttribute( Value, H5Data, AttributeName )
+    #Close everything up before exiting
+    H5Dclose( H5Data )
+    H5Gclose( H5Group )
+    H5Fclose( H5File )
+}
