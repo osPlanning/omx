@@ -76,11 +76,32 @@ public class OmxHdf5Datatype {
         public static OmxJavaType getJavaTypeForHdf5Id(int hdf5Id) {
             try {
                 int hdf5Native = H5.H5Tget_native_type(hdf5Id);
-                for (OmxJavaType omxJavaType : values())
-                    if (H5.H5Tequal(omxJavaType.hdf5NativeId,hdf5Native))
-                        return omxJavaType;
+                
+                //System.out.println(H5Datatype.getDatatypeDescription(hdf5Native).toLowerCase());
+                
+                if (H5Datatype.getDatatypeDescription(hdf5Native).toLowerCase().contains("32-bit integer"))
+                    return INT;
+                if (H5Datatype.getDatatypeDescription(hdf5Native).toLowerCase().contains("32-bit unsigned integer"))
+                    return INT;
+                
+                if (H5Datatype.getDatatypeDescription(hdf5Native).toLowerCase().contains("16-bit integer"))
+                    return SHORT;
+                if (H5Datatype.getDatatypeDescription(hdf5Native).toLowerCase().contains("16-bit unsigned integer"))
+                    return SHORT;
+                
+                if (H5Datatype.getDatatypeDescription(hdf5Native).toLowerCase().contains("32-bit float"))
+                    return FLOAT;
+                if (H5Datatype.getDatatypeDescription(hdf5Native).toLowerCase().contains("64-bit float"))
+                    return DOUBLE;
+                
+                if (H5Datatype.getDatatypeDescription(hdf5Native).toLowerCase().contains("8-bit integer"))
+                    return BYTE;
+                if (H5Datatype.getDatatypeDescription(hdf5Native).toLowerCase().contains("8-bit unsigned integer"))
+                    return BYTE;
+                
                 if (H5Datatype.getDatatypeDescription(hdf5Native).toLowerCase().contains("string"))
                     return STRING;
+
                 return null;
 
             } catch (HDF5LibraryException e) {
