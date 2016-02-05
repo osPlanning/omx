@@ -93,14 +93,12 @@ namespace CSharpOMX
             // get info about the tables
             this.dataGroup = H5G.open(fileId, dataGroupName);
             this.NumMatrix = (int)H5G.getNumObjects(this.dataGroup);
-
-            // Create connection to each matrix 
-            this.MatrixNames = new string[NumMatrix];
+            this.MatrixNames = new List<string>();
 
             for (int i = 0; i < NumMatrix; i++)
             {
                 string matName = H5G.getObjectNameByIndex(this.dataGroup, (ulong)i);
-                MatrixNames[i] = matName;
+                MatrixNames.Add(matName);
                 H5DataSetId matId = H5D.open(dataGroup, matName);
                 tables.Add(matName, matId);
             }
@@ -111,14 +109,12 @@ namespace CSharpOMX
         {
             this.luGroup = H5G.open(fileId, luGroupName);
             this.NumIndexMap = (int)H5G.getNumObjects(this.luGroup);
-
-            // Create connection to each index  
-            this.IndexMapNames = new string[NumIndexMap];
+            this.IndexMapNames = new List<string>();
 
             for (int i = 0; i < NumIndexMap; i++)
             {
                 string imName = H5G.getObjectNameByIndex(this.luGroup, (ulong)i);
-                IndexMapNames[i] = imName;
+                IndexMapNames.Add(imName);
                 H5DataSetId imId = H5D.open(luGroup, imName);
                 indexMaps.Add(imName, imId);
             }
