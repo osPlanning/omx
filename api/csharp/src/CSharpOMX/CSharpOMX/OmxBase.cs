@@ -27,9 +27,9 @@ namespace CSharpOMX
         // OMX file attributes
         public string OmxVersion { get; protected set; }
         public long[] Shape { get; protected set; }
-        public string[] MatrixNames { get; protected set; }
+        public List<string> MatrixNames { get; protected set; }
         public int NumMatrix { get; protected set; }
-        public string[] IndexMapNames { get; protected set; }
+        public List<string> IndexMapNames { get; protected set; }
         public int NumIndexMap { get; protected set; }
         public bool IsValid { get; protected set; }
         public string ErrMessage { get; protected set; }
