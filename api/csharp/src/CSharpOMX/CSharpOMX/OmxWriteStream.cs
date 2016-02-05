@@ -67,6 +67,7 @@ namespace CSharpOMX
         {
             this.dataGroup = H5G.create(fileId, dataGroupName);
             this.NumMatrix = 0;
+            this.MatrixNames = new List<string>();
             return (true);
         }
 
@@ -74,7 +75,7 @@ namespace CSharpOMX
         {
             this.luGroup = H5G.create(fileId, luGroupName);
             this.NumIndexMap = 0;
-
+            this.IndexMapNames = new List<string>();
             return (true);
         }
 
@@ -143,6 +144,8 @@ namespace CSharpOMX
             H5DataSetId newMappingID = H5D.create(luGroup, mapName, mapDataType, mapSpaceId);
             H5D.write(newMappingID, mapDataType, new H5Array<T>(tazEquiv));
 
+            IndexMapNames.Add(mapName);
+            NumIndexMap++;
             this.indexMaps.Add(mapName, newMappingID);
         }
 
@@ -172,6 +175,8 @@ namespace CSharpOMX
                 H5DataSetId matId = H5D.create(dataGroup, matName, matDataType, matSpace);
                 tables.Add(matName, matId);
                 H5S.close(matSpace);
+                MatrixNames.Add(matName);
+                NumMatrix++;
                 status = 0;
             }
             else
