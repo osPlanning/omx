@@ -1,4 +1,5 @@
-import omx,numpy
+import openmatrix as omx
+import numpy
 
 # Create some data
 ones = numpy.ones((100,100))
@@ -19,7 +20,7 @@ myfile.close()
 # Open an OMX file for reading only
 myfile = omx.openFile('myfile.omx')
 
-print myfile.shape()                 # (100,100)
+print (myfile.shape())               # (100,100)
 len(myfile)                          # 3
 myfile.listMatrices()                # ['m1','m2',',m3']
 
@@ -49,21 +50,23 @@ myfile['m1'].attrs.tags = ['trips','am','hwy']
 myfile['m2'].attrs.tags = ['trips','md','hwy']
 myfile['m3'].attrs.tags = ['trips','md','trn']
 
-myfile.listAllTags()                 # ['am','hwy','md','trips','trn']
+try:
+	myfile.listAllTags()                 # ['am','hwy','md','trips','trn']
 
-# Use a TUPLE to select matrices via tags:
-all_hwy_trips = myfile[ ('trips','hwy') ]   # [m1,m2]
-all_md_trips = myfile[ ('md',) ]            # [m2,m3]
+	# Use a TUPLE to select matrices via tags:
+	all_hwy_trips = myfile[ ('trips','hwy') ]   # [m1,m2]
+	all_md_trips = myfile[ ('md',) ]            # [m2,m3]
 
-print numpy.sum(all_md_trips)
-
+	print (numpy.sum(all_md_trips))
+except:
+	print("oops, these commands don't currently work with this package")
 
 # SUPER FANCY: Create a mapping to use TAZ numbers instead of matrix offsets
 # --------------------------------------------------------------------------
 # (any mapping would work, such as a mapping with large gaps between zone
 #  numbers. For this simple case we'll just assume TAZ numbers are 1-100.)
 
-taz_equivs = range(1,101)                  # 1-100 inclusive
+taz_equivs = numpy.arange(1,101)                  # 1-100 inclusive
 
 myfile.createMapping('taz', taz_equivs)
 myfile.listMappings()                 # ['taz']
@@ -72,7 +75,7 @@ tazs = myfile.mapping('taz')          # Returns a dict:  {1:0, 2:1, 3:2, ..., 10
 
 m3 = myfile['m3']
 
-print m3[tazs[100]][tazs[100]]      # 3.0  (taz (100,100) is cell [99][99])
+print (m3[tazs[100]][tazs[100]])      # 3.0  (taz (100,100) is cell [99][99])
 
 myfile.close()
 

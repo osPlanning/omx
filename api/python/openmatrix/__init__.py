@@ -4,8 +4,8 @@
 import tables
 import numpy as np
 
-from File import *
-from Exceptions import *
+from .File import *
+from .Exceptions import *
 
 # GLOBAL VARIABLES -----------
 __version__ = '0.2'
@@ -40,6 +40,6 @@ def openFile(filename, mode='r', title='', root_uep='/',
 
 
 if __name__ == "__main__":
-    print 'OMX!'
+    print ('OMX!')
 
 

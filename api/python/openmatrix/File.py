@@ -4,7 +4,7 @@
 import numpy as np
 import tables  # requires pytables >= 2.4
 
-from Exceptions import *
+from .Exceptions import *
 
 
 class File(tables.File):
