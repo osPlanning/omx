@@ -46,8 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OmxBase.cs" />
     <Compile Include="OmxFile.cs" />
-    <Compile Include="OmxMatrix.cs" />
+    <Compile Include="OmxReadStream.cs" />
+    <Compile Include="OmxWriteStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
