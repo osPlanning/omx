@@ -33,11 +33,11 @@ class File(tables.File):
 
         # Create the HDF5 array
         if tables.__version__.startswith('3'):
-            matrix = self.createCArray(self.root.data, name, atom, shape, title, filters,
+            matrix = self.create_carray(self.root.data, name, atom, shape, title, filters,
                                        chunkshape, byteorder, createparents, obj)
         else:
             # this version is tables 2.4-compatible:
-            matrix = self.createCArray(self.root.data, name, atom, shape, title, filters,
+            matrix = self.create_carray(self.root.data, name, atom, shape, title, filters,
                                        chunkshape, byteorder, createparents)
             if (obj is not None):
                 matrix[:] = obj
@@ -73,7 +73,7 @@ class File(tables.File):
 
         # Inspect the first CArray object to determine its shape
         if len(self) > 0:
-            self._shape = self.iterNodes(self.root.data,'CArray').next().shape
+            self._shape = self.iter_nodes(self.root.data,'CArray').next().shape
 
             # Store it if we can
             if self._isWritable():
@@ -90,13 +90,13 @@ class File(tables.File):
 
     def listMatrices(self):
         """Return list of Matrix names in this File"""
-        return [node.name for node in self.listNodes(self.root.data,'CArray')]
+        return [node.name for node in self.list_nodes(self.root.data,'CArray')]
 
 
     def listAllAttributes(self):
         """Return combined list of all attributes used for any Matrix in this File"""
         all_tags = set()
-        for m in self.iterNodes(self.root.data, 'CArray'):
+        for m in self.iter_nodes(self.root.data, 'CArray'):
             all_tags.update(m.attrs._v_attrnamesuser)
         return sorted(all_tags)
 
@@ -104,14 +104,14 @@ class File(tables.File):
     # MAPPINGS -----------------------------------------------
     def listMappings(self):
         try:
-            return [m.name for m in self.listNodes(self.root.lookup)]
+            return [m.name for m in self.list_nodes(self.root.lookup)]
         except:
             return []
 
 
     def deleteMapping(self, title):
         try:
-            self.removeNode(self.root.lookup, title)
+            self.remove_node(self.root.lookup, title)
         except:
             raise LookupError('No such mapping: '+title)
 
@@ -122,7 +122,7 @@ class File(tables.File):
         try:
             # fetch entries
             entries = []
-            entries.extend(self.getNode(self.root.lookup, title)[:])
+            entries.extend(self.get_node(self.root.lookup, title)[:])
 
             # build reverse key-lookup
             keymap = {}
@@ -139,7 +139,7 @@ class File(tables.File):
         try:
             # fetch entries
             entries = []
-            entries.extend(self.getNode(self.root.lookup, title)[:])
+            entries.extend(self.get_node(self.root.lookup, title)[:])
 
             return (keymap,entries)
 
@@ -181,13 +181,13 @@ class File(tables.File):
         """Return a matrix by name, or a list of matrices by attributes"""
 
         if isinstance(key, str):
-            return self.getNode(self.root.data, key)
+            return self.get_node(self.root.data, key)
 
         if 'keys' not in dir(key):
             raise LookupError('Key %s not found' % key)
 
         # Loop through key/value pairs
-        mats = self.listNodes(self.root.data, 'CArray')
+        mats = self.list_nodes(self.root.data, 'CArray')
         for a in key.keys():
             mats = self._getMatricesByAttribute(a, key[a], mats)
 
@@ -199,7 +199,7 @@ class File(tables.File):
         answer = []
 
         if matrices is None:
-            matrices = self.listNodes(self.root.data,'CArray')
+            matrices = self.list_nodes(self.root.data,'CArray')
 
         for m in matrices:
             if m.attrs is None:
@@ -213,7 +213,7 @@ class File(tables.File):
 
 
     def __len__(self):
-        return len(self.listNodes(self.root.data, 'CArray'))
+        return len(self.list_nodes(self.root.data, 'CArray'))
 
 
     def __setitem__(self, key, dataset):
@@ -230,12 +230,12 @@ class File(tables.File):
 
 
     def __delitem__(self, key):
-        self.removeNode(self.root.data, key)
+        self.remove_node(self.root.data, key)
 
 
     def __iter__(self):
         """Iterate over the keys in this container"""
-        return self.iterNodes(self.root.data, 'CArray')
+        return self.iter_nodes(self.root.data, 'CArray')
 
 
     def __contains__(self, item):

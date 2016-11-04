@@ -11,7 +11,7 @@ from Exceptions import *
 __version__ = '0.2'
 
 # GLOBAL FUNCTIONS -----------
-def openFile(filename, mode='r', title='', root_uep='/',
+def open_file(filename, mode='r', title='', root_uep='/',
              filters=tables.Filters(complevel=1,shuffle=True,fletcher32=False,complib='zlib'),
              shape=None, **kwargs):
     """Open or create a new OMX file. New files will be created with default
@@ -32,9 +32,9 @@ def openFile(filename, mode='r', title='', root_uep='/',
 
         # /data and /lookup folders
         if 'data' not in f.root:
-            f.createGroup(f.root,"data")
+            f.create_group(f.root,"data")
         if 'lookup' not in f.root:
-            f.createGroup(f.root,"lookup")
+            f.create_group(f.root,"lookup")
 
     return f
 
