@@ -37,25 +37,25 @@ def teardown_func():
 
 @nt.with_setup(setup_func, teardown_func)
 def test_create_file():
-    with omx.openFile(TEST_FILE, 'w'):
+    with omx.open_file(TEST_FILE, 'w'):
         pass
     assert os.path.isfile(TEST_FILE)
 
 
 @nt.with_setup(setup_func, teardown_func)
 def test_open_readonly_hdf5_file():
-    with tables.openFile(TEST_FILE, 'w'):
+    with tables.open_file(TEST_FILE, 'w'):
         pass
 
     assert os.path.isfile(TEST_FILE)
 
-    with omx.openFile(TEST_FILE, 'r'):
+    with omx.open_file(TEST_FILE, 'r'):
         pass
 
 
 @nt.with_setup(setup_func, teardown_func)
 def test_set_get_del():
-    with omx.openFile(TEST_FILE, 'w') as f:
+    with omx.open_file(TEST_FILE, 'w') as f:
         add_m1_node(f)
         npt.assert_array_equal(f['m1'], ones5x5())
         nt.assert_equal(f.shape(), (5, 5))
@@ -65,7 +65,7 @@ def test_set_get_del():
 
 @nt.with_setup(setup_func, teardown_func)
 def test_add_numpy_matrix_using_brackets():
-    with omx.openFile(TEST_FILE, 'w') as f:
+    with omx.open_file(TEST_FILE, 'w') as f:
         f['m1'] = ones5x5()
         npt.assert_array_equal(f['m1'], ones5x5())
         nt.assert_equal(f.shape(), (5, 5))
@@ -77,7 +77,7 @@ def test_add_numpy_matrix_using_brackets():
 
 @nt.with_setup(setup_func, teardown_func)
 def test_add_numpy_matrix_using_create_matrix():
-    with omx.openFile(TEST_FILE, 'w') as f:
+    with omx.open_file(TEST_FILE, 'w') as f:
         f.createMatrix('m1', obj=ones5x5())
         npt.assert_array_equal(f['m1'], ones5x5())
         nt.assert_equal(f.shape(), (5, 5))
@@ -86,17 +86,17 @@ def test_add_numpy_matrix_using_create_matrix():
 @nt.with_setup(setup_func, teardown_func)
 @nt.raises(tables.FileModeError)
 def test_add_matrix_to_readonly_file():
-    with omx.openFile(TEST_FILE, 'w') as f:
+    with omx.open_file(TEST_FILE, 'w') as f:
         f['m2'] = np.ones((5, 5))
 
-    with omx.openFile(TEST_FILE, 'r') as f:
+    with omx.open_file(TEST_FILE, 'r') as f:
         f.createMatrix('m1', obj=np.ones((5, 5)))
 
 
 @nt.with_setup(setup_func, teardown_func)
 @nt.raises(tables.NodeError)
 def test_add_matrix_with_same_name():
-    with omx.openFile(TEST_FILE, 'w') as f:
+    with omx.open_file(TEST_FILE, 'w') as f:
         add_m1_node(f)
         # now add m1 again:
         add_m1_node(f)
@@ -104,7 +104,7 @@ def test_add_matrix_with_same_name():
 
 @nt.with_setup(setup_func, teardown_func)
 def test_get_length_of_file():
-    with omx.openFile(TEST_FILE, 'w') as f:
+    with omx.open_file(TEST_FILE, 'w') as f:
         f['m1'] = np.ones((5, 5))
         f['m2'] = np.ones((5, 5))
         f['m3'] = np.ones((5, 5))
@@ -117,7 +117,7 @@ def test_get_length_of_file():
 @nt.with_setup(setup_func, teardown_func)
 def test_len_list_iter():
     names = ['m{}'.format(x) for x in range(5)]
-    with omx.openFile(TEST_FILE, 'w') as f:
+    with omx.open_file(TEST_FILE, 'w') as f:
         for m in names:
             f[m] = ones5x5()
 
@@ -130,7 +130,7 @@ def test_len_list_iter():
 
 @nt.with_setup(setup_func, teardown_func)
 def test_contains():
-    with omx.openFile(TEST_FILE, 'w') as f:
+    with omx.open_file(TEST_FILE, 'w') as f:
         add_m1_node(f)
         nt.assert_in('m1', f)
         # keep this here to be sure we're actually running
@@ -140,7 +140,7 @@ def test_contains():
 
 @nt.with_setup(setup_func, teardown_func)
 def test_list_all_attrs():
-    with omx.openFile(TEST_FILE, 'w') as f:
+    with omx.open_file(TEST_FILE, 'w') as f:
         add_m1_node(f)
         f['m2'] = ones5x5()
 
@@ -156,7 +156,7 @@ def test_list_all_attrs():
 
 @nt.with_setup(setup_func, teardown_func)
 def test_matrices_by_attr():
-    with omx.openFile(TEST_FILE, 'w') as f:
+    with omx.open_file(TEST_FILE, 'w') as f:
         f['m1'] = ones5x5()
         f['m2'] = ones5x5()
         f['m3'] = ones5x5()
@@ -178,7 +178,7 @@ def test_matrices_by_attr():
 
 @nt.with_setup(setup_func, teardown_func)
 def test_set_with_carray():
-    with omx.openFile(TEST_FILE, 'w') as f:
+    with omx.open_file(TEST_FILE, 'w') as f:
         f['m1'] = ones5x5()
         f['m2'] = f['m1']
         npt.assert_array_equal(f['m2'], f['m1'])

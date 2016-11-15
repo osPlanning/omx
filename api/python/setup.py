@@ -11,7 +11,7 @@ setup(
     description='OMX, the open matrix data format.',
     long_description=open('README.txt').read(),
     install_requires=[
-        "tables >= 2.3.0",
+        "tables >= 3.0.0",
         "numpy >= 1.5.0",
     ],
     classifiers=[
