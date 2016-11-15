@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='OpenMatrix',
-    version='0.2.3',
+    version='0.2.4',
     author='Billy Charlton',
     author_email='billy@worldofbilly.com',
     packages=['openmatrix', 'openmatrix.test'],
