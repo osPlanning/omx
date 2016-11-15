@@ -1,12 +1,13 @@
-import omx,numpy
+import  openmatrix as omx
+import numpy as np
 
 # Create some data
-ones = numpy.ones((100,100))
+ones = np.ones((100,100))
 twos = 2.0*ones
 
 
 # Create an OMX file (will overwrite existing file!)
-myfile = omx.openFile('myfile.omx','w')   # use 'a' to append/edit an existing file
+myfile = omx.open_file('myfile.omx','w')   # use 'a' to append/edit an existing file
 
 
 # Write to the file.
@@ -17,7 +18,7 @@ myfile.close()
 
 
 # Open an OMX file for reading only
-myfile = omx.openFile('myfile.omx')
+myfile = omx.open_file('myfile.omx')
 
 print myfile.shape()                 # (100,100)
 len(myfile)                          # 3
@@ -32,7 +33,7 @@ m3 = myfile['m3']
 
 # halves = m1 * 0.5  # CRASH!  Don't modify an OMX object directly.
 #                    # Create a new numpy array, and then edit it.
-halves = numpy.array(m1) * 0.5
+halves = np.array(m1) * 0.5
 
 first_row = m2[0]
 first_row[:] = 0.5 * first_row[:]
@@ -40,22 +41,29 @@ first_row[:] = 0.5 * first_row[:]
 my_very_special_zone_value = m2[10][25]
 
 
-# FANCY: Use tags to find matrices
-# -----------------------------------
+# FANCY: Use attributes to find matrices
+# --------------------------------------
 myfile.close()                           # was opened read-only, so let's reopen.
-myfile = omx.openFile('myfile.omx','a')  # append mode: read/write existing file
+myfile = omx.open_file('myfile.omx','a')  # append mode: read/write existing file
 
-myfile['m1'].attrs.tags = ['trips','am','hwy']
-myfile['m2'].attrs.tags = ['trips','md','hwy']
-myfile['m3'].attrs.tags = ['trips','md','trn']
+myfile['m1'].attrs.timeperiod = 'am'
+myfile['m1'].attrs.mode = 'hwy'
 
-myfile.listAllTags()                 # ['am','hwy','md','trips','trn']
+myfile['m2'].attrs.timeperiod = 'md'
 
-# Use a TUPLE to select matrices via tags:
-all_hwy_trips = myfile[ ('trips','hwy') ]   # [m1,m2]
-all_md_trips = myfile[ ('md',) ]            # [m2,m3]
+myfile['m3'].attrs.timeperiod = 'am'
+myfile['m3'].attrs.mode = 'trn'
 
-print numpy.sum(all_md_trips)
+
+myfile.listAllAttributes()                    # ['am','hwy','md','trn']
+
+# Use a DICT to select matrices via attributes:
+
+all_am_trips = myfile[ {'timeperiod':'am'} ]                    # [m1,m3]
+all_hwy_trips = myfile[ {'mode':'hwy'} ]                        # [m1]
+all_am_trn_trips = myfile[ {'mode':'trn','timeperiod':'am'} ]   # [m3]
+
+print np.sum(all_am_trips)
 
 
 # SUPER FANCY: Create a mapping to use TAZ numbers instead of matrix offsets
@@ -75,4 +83,3 @@ m3 = myfile['m3']
 print m3[tazs[100]][tazs[100]]      # 3.0  (taz (100,100) is cell [99][99])
 
 myfile.close()
-
