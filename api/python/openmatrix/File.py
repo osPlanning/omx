@@ -169,7 +169,7 @@ class File(tables.File):
             self.createGroup(self.root, 'lookup')
 
         # Write the mapping!
-        mymap = self.createArray(self.root.lookup, title, atom=tables.UInt32Atom(),
+        mymap = self.create_array(self.root.lookup, title, atom=tables.UInt32Atom(),
                                  shape=(len(entries),) )
         mymap[:] = entries
 
