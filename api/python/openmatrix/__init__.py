@@ -1,11 +1,13 @@
 # OMX package
 # release 1
 
+from __future__ import print_function
+
 import tables
 import numpy as np
 
-from File import *
-from Exceptions import *
+from .File import *
+from .Exceptions import *
 
 # GLOBAL VARIABLES -----------
 __version__ = '0.2'
@@ -40,6 +42,5 @@ def open_file(filename, mode='r', title='', root_uep='/',
 
 
 if __name__ == "__main__":
-    print 'OMX!'
-
+    print('OMX!')
 

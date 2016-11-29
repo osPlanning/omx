@@ -1,4 +1,5 @@
-import  openmatrix as omx
+from __future__ import print_function
+import openmatrix as omx
 import numpy as np
 
 # Create some data
@@ -20,7 +21,7 @@ myfile.close()
 # Open an OMX file for reading only
 myfile = omx.open_file('myfile.omx')
 
-print myfile.shape()                 # (100,100)
+print (myfile.shape())                 # (100,100)
 len(myfile)                          # 3
 myfile.listMatrices()                # ['m1','m2',',m3']
 
@@ -63,7 +64,7 @@ all_am_trips = myfile[ {'timeperiod':'am'} ]                    # [m1,m3]
 all_hwy_trips = myfile[ {'mode':'hwy'} ]                        # [m1]
 all_am_trn_trips = myfile[ {'mode':'trn','timeperiod':'am'} ]   # [m3]
 
-print np.sum(all_am_trips)
+print (np.sum(all_am_trips))
 
 
 # SUPER FANCY: Create a mapping to use TAZ numbers instead of matrix offsets
@@ -71,7 +72,7 @@ print np.sum(all_am_trips)
 # (any mapping would work, such as a mapping with large gaps between zone
 #  numbers. For this simple case we'll just assume TAZ numbers are 1-100.)
 
-taz_equivs = range(1,101)                  # 1-100 inclusive
+taz_equivs = np.arange(1,101)                  # 1-100 inclusive
 
 myfile.createMapping('taz', taz_equivs)
 myfile.listMappings()                 # ['taz']
@@ -80,6 +81,6 @@ tazs = myfile.mapping('taz')          # Returns a dict:  {1:0, 2:1, 3:2, ..., 10
 
 m3 = myfile['m3']
 
-print m3[tazs[100]][tazs[100]]      # 3.0  (taz (100,100) is cell [99][99])
+print(m3[tazs[100]][tazs[100]])      # 3.0  (taz (100,100) is cell [99][99])
 
 myfile.close()
