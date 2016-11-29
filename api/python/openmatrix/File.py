@@ -2,9 +2,9 @@
 # release 1
 
 import numpy as np
-import tables  # requires pytables >= 2.4
+import tables  # requires pytables >= 3.1
 
-from Exceptions import *
+from .Exceptions import *
 
 
 class File(tables.File):
@@ -20,7 +20,7 @@ class File(tables.File):
             return None
 
 
-    def createMatrix(self, name, atom=None, shape=None, title='', filters=None,
+    def create_matrix(self, name, atom=None, shape=None, title='', filters=None,
                      chunkshape=None, byteorder=None, createparents=False, obj=None,
                      attrs=None):
         """Create OMX Matrix (CArray) at root level. User must pass in either
@@ -88,12 +88,12 @@ class File(tables.File):
             return None
 
 
-    def listMatrices(self):
+    def list_matrices(self):
         """Return list of Matrix names in this File"""
         return [node.name for node in self.list_nodes(self.root.data,'CArray')]
 
 
-    def listAllAttributes(self):
+    def list_all_attributes(self):
         """Return combined list of all attributes used for any Matrix in this File"""
         all_tags = set()
         for m in self.iter_nodes(self.root.data, 'CArray'):
@@ -102,14 +102,14 @@ class File(tables.File):
 
 
     # MAPPINGS -----------------------------------------------
-    def listMappings(self):
+    def list_mappings(self):
         try:
             return [m.name for m in self.list_nodes(self.root.lookup)]
         except:
             return []
 
 
-    def deleteMapping(self, title):
+    def delete_mapping(self, title):
         try:
             self.remove_node(self.root.lookup, title)
         except:
@@ -134,7 +134,7 @@ class File(tables.File):
         except:
             raise LookupError('No such mapping: '+title)
 
-    def mapentries(self, title):
+    def map_entries(self, title):
         """Return entries[] with key for each array offset."""
         try:
             # fetch entries
@@ -147,7 +147,7 @@ class File(tables.File):
             raise LookupError('No such mapping: '+title)
 
 
-    def createMapping(self, title, entries, overwrite=False):
+    def create_mapping(self, title, entries, overwrite=False):
         """Create an equivalency index, which maps a raw data dimension to
            another integer value. Once created, mappings can be referenced by
            offset or by key."""
@@ -158,15 +158,15 @@ class File(tables.File):
                 raise ShapeError('Mapping must match one data dimension')
 
         # Handle case where mapping already exists:
-        if title in self.listMappings():
+        if title in self.list_mappings():
             if overwrite:
-                self.deleteMapping(title)
+                self.delete_mapping(title)
             else:
                 raise LookupError(title+' mapping already exists.')
 
         # Create lookup group under root if it doesn't already exist.
         if 'lookup' not in self.root:
-            self.createGroup(self.root, 'lookup')
+            self.create_group(self.root, 'lookup')
 
         # Write the mapping!
         mymap = self.create_array(self.root.lookup, title, atom=tables.UInt32Atom(),
@@ -226,7 +226,7 @@ class File(tables.File):
         if dataset.__class__.__name__ == 'CArray':
             return dataset.copy(self.root.data, key)
         else:
-            return self.createMatrix(key, atom, shape, obj=dataset)
+            return self.create_matrix(key, atom, shape, obj=dataset)
 
 
     def __delitem__(self, key):
@@ -240,4 +240,16 @@ class File(tables.File):
 
     def __contains__(self, item):
         return item in self.root.data._v_children
+
+    # BACKWARD COMPATIBILITY:
+    # PyTables switched from camelCaseMethods to camel_case_methods
+    # We follow suit, and keep old methods for backward compat:
+    createMapping = create_mapping
+    createMatrix = create_matrix
+    deleteMapping = delete_mapping
+    listMatrices = list_matrices
+    listAllAttributes = list_all_attributes
+    listMappings = list_mappings
+    mapentries = map_entries
+    mapEntries = map_entries
 

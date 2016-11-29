@@ -17,7 +17,7 @@ def ones5x5():
 
 
 def add_m1_node(f):
-    f.createMatrix('m1', obj=ones5x5())
+    f.create_matrix('m1', obj=ones5x5())
 
 
 def setup_func():
@@ -72,13 +72,13 @@ def test_add_numpy_matrix_using_brackets():
 
         # test check for shape matching
         with nt.assert_raises(omx.Exceptions.ShapeError):
-            f.createMatrix('m2', obj=np.ones((8, 8)))
+            f.create_matrix('m2', obj=np.ones((8, 8)))
 
 
 @nt.with_setup(setup_func, teardown_func)
 def test_add_numpy_matrix_using_create_matrix():
     with omx.open_file(TEST_FILE, 'w') as f:
-        f.createMatrix('m1', obj=ones5x5())
+        f.create_matrix('m1', obj=ones5x5())
         npt.assert_array_equal(f['m1'], ones5x5())
         nt.assert_equal(f.shape(), (5, 5))
 
@@ -90,7 +90,7 @@ def test_add_matrix_to_readonly_file():
         f['m2'] = np.ones((5, 5))
 
     with omx.open_file(TEST_FILE, 'r') as f:
-        f.createMatrix('m1', obj=np.ones((5, 5)))
+        f.create_matrix('m1', obj=np.ones((5, 5)))
 
 
 @nt.with_setup(setup_func, teardown_func)
@@ -111,7 +111,7 @@ def test_get_length_of_file():
         f['m4'] = np.ones((5, 5))
         f['m5'] = np.ones((5, 5))
         nt.assert_equal(len(f), 5)
-        nt.assert_equal(len(f.listMatrices()), 5)
+        nt.assert_equal(len(f.list_matrices()), 5)
 
 
 @nt.with_setup(setup_func, teardown_func)
@@ -125,7 +125,7 @@ def test_len_list_iter():
             npt.assert_array_equal(mat, ones5x5())
 
         nt.assert_equal(len(f), len(names))
-        nt.assert_equal(f.listMatrices(), names)
+        nt.assert_equal(f.list_matrices(), names)
 
 
 @nt.with_setup(setup_func, teardown_func)
@@ -144,14 +144,14 @@ def test_list_all_attrs():
         add_m1_node(f)
         f['m2'] = ones5x5()
 
-        nt.assert_equal(f.listAllAttributes(), [])
+        nt.assert_equal(f.list_all_attributes(), [])
 
         f['m1'].attrs['a1'] = 'a1'
         f['m1'].attrs['a2'] = 'a2'
         f['m2'].attrs['a2'] = 'a2'
         f['m2'].attrs['a3'] = 'a3'
 
-        nt.assert_equal(f.listAllAttributes(), ['a1', 'a2', 'a3'])
+        nt.assert_equal(f.list_all_attributes(), ['a1', 'a2', 'a3'])
 
 
 @nt.with_setup(setup_func, teardown_func)
@@ -182,3 +182,4 @@ def test_set_with_carray():
         f['m1'] = ones5x5()
         f['m2'] = f['m1']
         npt.assert_array_equal(f['m2'], f['m1'])
+
