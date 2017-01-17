@@ -2,8 +2,6 @@
 
 This is the R API for the Open Matrix Project.  
 
-See project page [here](https://sites.google.com/site/openmodeldata/apis/r-api?pli=1).
-
 # Loading the OMX API in R
 
 `source("https://raw.githubusercontent.com/osPlanning/omx/dev/api/r/omx.R")`
