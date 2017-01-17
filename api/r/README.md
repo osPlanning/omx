@@ -1,6 +1,6 @@
 # Open Matrix R API
 
-This is the R API for the Open Matrix Project.  
+This is the R API for the Open Matrix Project.  Also check out the [omxr] (https://github.com/gregmacfarlane/omxr) package.  
 
 # Loading the OMX API in R
 
