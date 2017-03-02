@@ -213,7 +213,7 @@ class File(tables.File):
 
 
     def __len__(self):
-        return len(self.list_nodes(self.root.data, 'CArray'))
+        return len(self.list_nodes(self.root.data))
 
 
     def __setitem__(self, key, dataset):
