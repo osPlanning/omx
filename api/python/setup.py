@@ -1,14 +1,15 @@
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(
     name='OpenMatrix',
-    version='0.2.4',
+    keywords='openmatrix omx',
+    version='0.3.0',
     author='Billy Charlton',
-    author_email='billy@worldofbilly.com',
-    packages=['openmatrix', 'openmatrix.test'],
+    author_email='billy@okbecause.com',
+    packages=find_packages(),
     url='https://sites.google.com/site/openmodeldata',
     license='Apache',
-    description='OMX, the open matrix data format.',
+    description='OMX, the open matrix data format',
     long_description=open('README.txt').read(),
     install_requires=[
         "tables >= 3.1.0",
