@@ -1,5 +1,4 @@
 # OMX package
-# release 1
 
 from __future__ import print_function
 
@@ -10,7 +9,7 @@ from .File import *
 from .Exceptions import *
 
 # GLOBAL VARIABLES -----------
-__version__ = '0.2'
+__version__ = '0.3.1'
 
 # GLOBAL FUNCTIONS -----------
 def open_file(filename, mode='r', title='', root_uep='/',
