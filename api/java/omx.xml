@@ -1,0 +1,42 @@
+<project name="omx" default="all">
+
+    <!-- File location -->
+    <dirname property="module.omx.basedir" file="${ant.file}"/>
+
+    <!-- classpath -->
+    <path id="compile.classpath">
+
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/fits.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/jhdf.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/jhdf4obj.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/jhdf5.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/jhdf5obj.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/jhdfobj.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/jhdfview.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/junit.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/netcdf.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/ext/fitsobj.jar"/>
+        <pathelement location="${module.omx.basedir}/../../../../hdf5/lib/ext/nc2obj.jar"/>
+    
+    </path>
+  	
+	<!-- build jar only, need to build in Eclipse first -->
+  	<target name="release">
+
+        <delete file="${module.omx.basedir}/release/omx.jar"/>
+        <jar destfile="${module.omx.basedir}/release/omx.jar">
+
+          <zipgroupfileset dir="{module.omx.basedir}/../../../../hdf5/lib" includes="*.jar"/>
+          <zipgroupfileset dir="{module.omx.basedir}/../../../../hdf5/lib/ext" includes="*.jar"/>
+
+          <fileset dir="${module.omx.basedir}/bin">
+            <include name="**/*.class"/>
+          </fileset>
+
+        </jar>
+    </target>
+
+</project>
+
+
+
