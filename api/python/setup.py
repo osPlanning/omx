@@ -1,5 +1,8 @@
 from setuptools import setup, find_packages
 
+# To push to PyPi/pip, use
+# python setup.py sdist bdist_wheel upload
+
 setup(
     name='OpenMatrix',
     keywords='openmatrix omx',
