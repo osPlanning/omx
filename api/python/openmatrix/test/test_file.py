@@ -183,3 +183,18 @@ def test_set_with_carray():
         f['m2'] = f['m1']
         npt.assert_array_equal(f['m2'], f['m1'])
 
+@nt.with_setup(setup_func, teardown_func)
+def test_mappings():
+    with omx.open_file(TEST_FILE, 'w') as f:
+        taz_equivs = np.arange(1,4)
+        f.create_mapping('taz', taz_equivs)
+
+        tazs = f.mapping('taz')
+        nt.assert_equal(tazs, {1:0, 2:1, 3:2})
+        nt.assert_raises(LookupError, f.mapping, 'missing')
+        nt.assert_raises(TypeError, f.mapping)
+
+        entries = f.map_entries('taz')
+        nt.assert_equal(entries, [1, 2, 3])
+        nt.assert_raises(LookupError, f.map_entries, 'missing')
+        nt.assert_raises(TypeError, f.map_entries)

@@ -135,13 +135,15 @@ class File(tables.File):
             raise LookupError('No such mapping: '+title)
 
     def map_entries(self, title):
-        """Return entries[] with key for each array offset."""
+        """Return a list of entries for the specified mapping.
+           Throws LookupError if the specified mapping does not exist.
+        """
         try:
             # fetch entries
             entries = []
             entries.extend(self.get_node(self.root.lookup, title)[:])
 
-            return (keymap,entries)
+            return entries
 
         except:
             raise LookupError('No such mapping: '+title)
