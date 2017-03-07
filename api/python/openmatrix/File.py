@@ -76,7 +76,7 @@ class File(tables.File):
             self._shape = self.iter_nodes(self.root.data,'CArray').next().shape
 
             # Store it if we can
-            if self._isWritable():
+            if self._iswritable():
                 storeshape = np.array(
                     [self._shape[0],self._shape[1]],
                     dtype='int32')
@@ -215,7 +215,7 @@ class File(tables.File):
 
 
     def __len__(self):
-        return len(self.list_nodes(self.root.data))
+        return len(self.list_nodes(self.root.data, 'CArray'))
 
 
     def __setitem__(self, key, dataset):
