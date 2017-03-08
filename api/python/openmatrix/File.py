@@ -1,6 +1,3 @@
-# OMX package
-# release 1
-
 import numpy as np
 import tables  # requires pytables >= 3.1
 
@@ -8,12 +5,20 @@ from .Exceptions import *
 
 
 class File(tables.File):
+    """
+    OMX File class, which contains all the methods for adding, removing, manipulating tables 
+    and mappings in an OMX file.
+    """
 
     def __init__(self, f,m,t,r,f1, **kwargs):
         tables.File.__init__(self,f,m,t,r,f1,**kwargs)
         self._shape = None
 
     def version(self):
+        """
+        Return the OMX file format of this OMX file, embedded in the OMX_VERSION file attribute.
+        Returns None if the OMX_VERSION attribute is not set.
+        """
         if 'OMX_VERSION' in self.root._v_attrs:
             return self.root._v_attrs['OMX_VERSION']
         else:
@@ -23,24 +28,49 @@ class File(tables.File):
     def create_matrix(self, name, atom=None, shape=None, title='', filters=None,
                      chunkshape=None, byteorder=None, createparents=False, obj=None,
                      attrs=None):
-        """Create OMX Matrix (CArray) at root level. User must pass in either
-           an existing numpy matrix, or a shape and an atom type."""
+        """
+        Create an OMX Matrix (CArray) at the root level. User must pass in either
+        an existing numpy matrix, or a shape and an atom type.
+
+        Parameters
+        ----------
+        name : string
+            The name of this matrix. Stored in HDF5 as the leaf name.
+        title : string
+            Short description of this matrix. Default is ''.
+        obj : numpy.CArray
+            Existing numpy array from which to create this OMX matrix. If obj is passed in,
+            then shape and atom can be left blank. If obj is not passed in, then a shape and
+            atom must be specified instead. Default is None.
+        shape : numpy.array
+            Optional shape of the matrix. Shape is an int32 numpy array of format (rows,columns).
+            If shape is not specified, an existing numpy CArray must be passed in instead, 
+            as the 'obj' parameter. Default is None.
+        atom : atom_type
+            Optional atom type of the data. Can be int32, float32, etc. Default is None.
+            If None specified, then obj parameter must be passed in instead.
+        filters : tables.Filters
+            Set of HDF5 filters (compression, etc) used for creating the matrix. 
+            Default is None. See HDF5 documentation for details. Note: while the default here
+            is None, the default set of filters set at the OMX parent file level is 
+            zlib compression level 1. Those settings usually trickle down to the table level.
+        attrs : dict
+            Dictionary of attribute names and values to be attached to this matrix.
+            Default is None.
+
+        Returns
+        -------
+        matrix : tables.carray
+            HDF5 CArray matrix
+        """
 
         # If object was passed in, make sure its shape is correct
         if self.shape() is not None and obj is not None and obj.shape != self.shape():
             raise ShapeError('%s has shape %s but this file requires shape %s' %
                 (name, obj.shape, self.shape()))
 
-        # Create the HDF5 array
-        if tables.__version__.startswith('3'):
-            matrix = self.create_carray(self.root.data, name, atom, shape, title, filters,
-                                       chunkshape, byteorder, createparents, obj)
-        else:
-            # this version is tables 2.4-compatible:
-            matrix = self.create_carray(self.root.data, name, atom, shape, title, filters,
-                                       chunkshape, byteorder, createparents)
-            if (obj is not None):
-                matrix[:] = obj
+        matrix = self.create_carray(self.root.data, name, atom, shape, title, filters,
+                                    chunkshape, byteorder, createparents, obj)
 
         # Store shape if we don't have one yet
         if self._shape is None:
@@ -56,7 +86,14 @@ class File(tables.File):
         return matrix
 
     def shape(self):
-        """Return the one and only shape of all matrices in this File"""
+        """
+        Get the one and only shape of all matrices in this File
+        
+        Returns
+        -------
+        shape : tuple
+            Tuple of (rows,columns) for this matrix and file.
+        """
 
         # If we already have the shape, just return it
         if self._shape:
@@ -89,12 +126,26 @@ class File(tables.File):
 
 
     def list_matrices(self):
-        """Return list of Matrix names in this File"""
+        """
+        List the matrix names in this File
+
+        Returns
+        -------
+        matrices : list
+            List of all matrix names stored in this OMX file.
+        """
         return [node.name for node in self.list_nodes(self.root.data,'CArray')]
 
 
     def list_all_attributes(self):
-        """Return combined list of all attributes used for any Matrix in this File"""
+        """
+        Return set of all attributes used for any Matrix in this File
+        
+        Returns
+        -------
+        all_attributes : set
+            The combined set of all attribute names that exist on any matrix in this file.
+        """
         all_tags = set()
         for m in self.iter_nodes(self.root.data, 'CArray'):
             all_tags.update(m.attrs._v_attrnamesuser)
@@ -103,6 +154,16 @@ class File(tables.File):
 
     # MAPPINGS -----------------------------------------------
     def list_mappings(self):
+        """
+        List all mappings in this file
+
+        Returns:
+        --------
+        mappings : list
+            List of the names of all mappings in the OMX file. Mappings 
+            are stored internally in the 'lookup' subset of the HDF5 file
+            structure. Returns empty list if there are no mappings.
+        """
         try:
             return [m.name for m in self.list_nodes(self.root.lookup)]
         except:
@@ -110,6 +171,14 @@ class File(tables.File):
 
 
     def delete_mapping(self, title):
+        """
+        Remove a mapping.
+
+        Raises:
+        -------
+        LookupError : if the specified mapping does not exist.
+        """
+
         try:
             self.remove_node(self.root.lookup, title)
         except:
@@ -117,8 +186,26 @@ class File(tables.File):
 
 
     def mapping(self, title):
-        """Return dict containing key:value pairs for specified mapping. Keys
-           represent the map item and value represents the array offset."""
+        """
+        Return dict containing key:value pairs for specified mapping. Keys
+        represent the map item and value represents the array offset.
+
+        Parameters:
+        -----------
+        title : string
+            Name of the mapping to be returned
+
+        Returns:
+        --------
+        mapping : dict
+            Dictionary where each key is the map item, and the value 
+            represents the array offset.
+
+        Raises:
+        -------
+        LookupError : if the specified mapping does not exist.
+        """
+
         try:
             # fetch entries
             entries = []
@@ -150,9 +237,30 @@ class File(tables.File):
 
 
     def create_mapping(self, title, entries, overwrite=False):
-        """Create an equivalency index, which maps a raw data dimension to
-           another integer value. Once created, mappings can be referenced by
-           offset or by key."""
+        """
+        Create an equivalency index, which maps a raw data dimension to
+        another integer value. Once created, mappings can be referenced by
+        offset or by key.
+        
+        Parameters:
+        -----------
+        title : string
+            Name of this mapping
+        entries : list
+            List of n equivalencies for the mapping. n must match one data
+            dimension of the matrix.
+        overwrite : boolean
+            True to allow overwriting an existing mapping, False will raise
+            a LookupError if the mapping already exists. Default is False.
+
+        Returns:
+        --------
+        mapping : tables.array
+            Returns the created mapping.
+
+        Raises:
+            LookupError : if the mapping exists and overwrite=False
+        """
 
         # Enforce shape-checking
         if self.shape():
