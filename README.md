@@ -1,7 +1,8 @@
 # OMX:  Open Matrix 
 
-# Introduction
+# MAIN DOCUMENTATION: [OMX Wiki}(https://github.com/osPlanning/omx/wiki)
 
+---
 An OMX matrix file is a structured collection of two-dimensional array objects and associated metadata.  OMX is built on top of the well-established HDF5 scientific data storage standard. An OMX file has a specific layout that is intended to ensure that complete and consistent information about the matrix data is stored and that the data can be retrieved correctly and efficiently.  We hope for the modeling industry to adopt the OMX standard, and we will periodically review the specification to make revisions as necessary.
 
 # OMX APIs for your language 
