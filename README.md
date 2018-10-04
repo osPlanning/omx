@@ -14,6 +14,7 @@ focused:
 * Java: https://github.com/osPlanning/omx-java
 * Python: https://github.com/osPlanning/omx-python
 * R: https://github.com/osPlanning/omx-r
+* Freepascal: https://github.com/jpn--/omx-freepascal
 
 # More Information
 
