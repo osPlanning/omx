@@ -2,6 +2,8 @@
 
 An OMX matrix file is a structured collection of two-dimensional array objects and associated metadata.  OMX is built on top of the well-established [HDF5](https://www.hdfgroup.org/solutions/hdf5/) scientific data storage standard. An OMX file has a specific layout that is intended to ensure that complete and consistent information about the matrix data is stored and that the data can be retrieved correctly and efficiently.  We hope for the modeling industry to adopt the OMX standard, and we will periodically review the specification to make revisions as necessary.  
 
+The normative OMX File Specification is maintained in [`omx.md`](omx.md) in this repository. 
+
 [![ZephyrTransportBadge](https://zephyrtransport.org/img/badging/project_pages/omx/omx.png)](https://zephyrtransport.org/)
 
 # OMX APIs for your language 
@@ -14,6 +16,10 @@ Each API is now developed in its own repository, to keep history cleaner and mor
 * C++: https://github.com/osPlanning/omx-cpp
 * Java: https://github.com/osPlanning/omx-java
 * Freepascal: https://github.com/jpn--/omx-freepascal
+
+Official vs Community bindings
+
+Official OMX language bindings are maintained by the OMX core developers and implement the full OMX Language Binding Specification (see `omx.md#1.3.1`). Community bindings may implement a subset of features; where full conformance is intended the term "OMX-compliant" should be used.
 
 # More Information
 
